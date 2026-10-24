@@ -1,0 +1,507 @@
+// !$*UTF8*$!
+{
+	archiveVersion = "1";
+	classes = {
+	};
+	objectVersion = "56";
+	objects = {
+		DA9B451CF1632E6DBFA23419 = {
+			isa = "PBXFileReference";
+			explicitFileType = "wrapper.framework";
+			path = "FocusDockCore.framework";
+			sourceTree = "BUILT_PRODUCTS_DIR";
+		};
+		027D487ADCC247023A2A3FF3 = {
+			isa = "PBXFileReference";
+			explicitFileType = "wrapper.application";
+			path = "干了吗.app";
+			sourceTree = "BUILT_PRODUCTS_DIR";
+		};
+		6D0E3C8BC56CE3D298EEF6BF = {
+			isa = "PBXFileReference";
+			explicitFileType = "wrapper.cfbundle";
+			path = "FocusDockCoreTests.xctest";
+			sourceTree = "BUILT_PRODUCTS_DIR";
+		};
+		5280E1E43AD8E82E8869B85D = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/Habit.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		174131406B19545D0922877C = {
+			isa = "PBXBuildFile";
+			fileRef = "5280E1E43AD8E82E8869B85D";
+		};
+		56FD22C6131C9B6ACAF989E3 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/HabitRepository.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		2EB53F5C3F914C5B8EBF9660 = {
+			isa = "PBXBuildFile";
+			fileRef = "56FD22C6131C9B6ACAF989E3";
+		};
+		5BAA5961DB98C379C7E31197 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/PanelInteraction.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		72D27490EF3B6D23A1A9B58C = {
+			isa = "PBXBuildFile";
+			fileRef = "5BAA5961DB98C379C7E31197";
+		};
+		B29E301413CDB2192768B134 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/ServiceInterfaces.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		090A86AE64FF5950F21883AB = {
+			isa = "PBXBuildFile";
+			fileRef = "B29E301413CDB2192768B134";
+		};
+		8D5F0FBC18161A235E662557 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/TaskDaySummary.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		3503BDDF77EC65FAFCFB75AC = {
+			isa = "PBXBuildFile";
+			fileRef = "8D5F0FBC18161A235E662557";
+		};
+		674EE6025DB107DD76947468 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/TaskRepository.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		EA04622AEABF98D82C5C4A38 = {
+			isa = "PBXBuildFile";
+			fileRef = "674EE6025DB107DD76947468";
+		};
+		EFB04566517799928666C57A = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/TodoItem.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		ED0B349D8E9154208540979C = {
+			isa = "PBXBuildFile";
+			fileRef = "EFB04566517799928666C57A";
+		};
+		9B59985F8B3B0B8F9741EC06 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockCore/WindowPlacement.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		4010ED34CD728D9139466F15 = {
+			isa = "PBXBuildFile";
+			fileRef = "9B59985F8B3B0B8F9741EC06";
+		};
+		D0851BEFFEA71FA22186FC23 = {
+			isa = "PBXSourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("174131406B19545D0922877C", "2EB53F5C3F914C5B8EBF9660", "72D27490EF3B6D23A1A9B58C", "090A86AE64FF5950F21883AB", "3503BDDF77EC65FAFCFB75AC", "EA04622AEABF98D82C5C4A38", "ED0B349D8E9154208540979C", "4010ED34CD728D9139466F15");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		3EA50D006D022AB536A16620 = {
+			isa = "PBXGroup";
+			name = "FocusDockCore";
+			children = ("5280E1E43AD8E82E8869B85D", "56FD22C6131C9B6ACAF989E3", "5BAA5961DB98C379C7E31197", "B29E301413CDB2192768B134", "8D5F0FBC18161A235E662557", "674EE6025DB107DD76947468", "EFB04566517799928666C57A", "9B59985F8B3B0B8F9741EC06");
+			sourceTree = "<group>";
+		};
+		78A7CC9A0061E1E572F6C089 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/FocusDockApp.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		D95D1565D3B5823717B291FE = {
+			isa = "PBXBuildFile";
+			fileRef = "78A7CC9A0061E1E572F6C089";
+		};
+		635F46C2750EAA38DF48E3E9 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/DockView.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		F9A4BADF79D34808C3CD652F = {
+			isa = "PBXBuildFile";
+			fileRef = "635F46C2750EAA38DF48E3E9";
+		};
+		B63BC8F0E4EEEC2F8F250256 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/DragRegion.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		CE80A6B4026379C93EE163D8 = {
+			isa = "PBXBuildFile";
+			fileRef = "B63BC8F0E4EEEC2F8F250256";
+		};
+		080A7AA7239C7071653E9B9C = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/HabitRowView.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		9EE92D9A14CC44C7EC79601D = {
+			isa = "PBXBuildFile";
+			fileRef = "080A7AA7239C7071653E9B9C";
+		};
+		B82D47D720262DEAE52B709D = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/OverlayScrollerStyle.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		D72799CE038C2EF636545905 = {
+			isa = "PBXBuildFile";
+			fileRef = "B82D47D720262DEAE52B709D";
+		};
+		59695B16798A7C10D2EFD364 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/PanelMaterialView.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		DE59D8C4F7071E176A34C330 = {
+			isa = "PBXBuildFile";
+			fileRef = "59695B16798A7C10D2EFD364";
+		};
+		AA07821F6B960C5C28A4742A = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/TaskEditorView.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		6B8A02211A65E19FD1F06FA7 = {
+			isa = "PBXBuildFile";
+			fileRef = "AA07821F6B960C5C28A4742A";
+		};
+		8D0D5215A6B8EF55797041A8 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/UI/TaskRowView.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		DA8112BE3562D801B60751AE = {
+			isa = "PBXBuildFile";
+			fileRef = "8D0D5215A6B8EF55797041A8";
+		};
+		EDE7DDFF7B1803B7B08714F6 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Sources/FocusDockApp/Window/PanelWindowController.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		8AF669F9CB4716E7BCE01199 = {
+			isa = "PBXBuildFile";
+			fileRef = "EDE7DDFF7B1803B7B08714F6";
+		};
+		C0BBD17BF7C64947E0FE2CD9 = {
+			isa = "PBXSourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("D95D1565D3B5823717B291FE", "F9A4BADF79D34808C3CD652F", "CE80A6B4026379C93EE163D8", "9EE92D9A14CC44C7EC79601D", "D72799CE038C2EF636545905", "DE59D8C4F7071E176A34C330", "6B8A02211A65E19FD1F06FA7", "DA8112BE3562D801B60751AE", "8AF669F9CB4716E7BCE01199");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		C3AD78852030F4678E90BA3B = {
+			isa = "PBXGroup";
+			name = "FocusDock";
+			children = ("78A7CC9A0061E1E572F6C089", "635F46C2750EAA38DF48E3E9", "B63BC8F0E4EEEC2F8F250256", "080A7AA7239C7071653E9B9C", "B82D47D720262DEAE52B709D", "59695B16798A7C10D2EFD364", "AA07821F6B960C5C28A4742A", "8D0D5215A6B8EF55797041A8", "EDE7DDFF7B1803B7B08714F6");
+			sourceTree = "<group>";
+		};
+		8943ED43DF39EA743CCA71DC = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Tests/FocusDockCoreTests/FocusDockCoreTests.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		B6075B77318AF69DCE8CCD87 = {
+			isa = "PBXBuildFile";
+			fileRef = "8943ED43DF39EA743CCA71DC";
+		};
+		1249C1CE5073AE1E1970EEE0 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Tests/FocusDockCoreTests/HabitTests.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		DBDF3CAFC40643C511818851 = {
+			isa = "PBXBuildFile";
+			fileRef = "1249C1CE5073AE1E1970EEE0";
+		};
+		B4A14EC82A4CC7044C8F7CB5 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "sourcecode.swift";
+			path = "Tests/FocusDockCoreTests/OriginalTaskSchema.swift";
+			sourceTree = "SOURCE_ROOT";
+		};
+		2257DCCC392444902E6B2DB1 = {
+			isa = "PBXBuildFile";
+			fileRef = "B4A14EC82A4CC7044C8F7CB5";
+		};
+		E0A88635A4ACACE781D4BA84 = {
+			isa = "PBXSourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("B6075B77318AF69DCE8CCD87", "DBDF3CAFC40643C511818851", "2257DCCC392444902E6B2DB1");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		8D0C262BC1F470E9DD174206 = {
+			isa = "PBXGroup";
+			name = "FocusDockCoreTests";
+			children = ("8943ED43DF39EA743CCA71DC", "1249C1CE5073AE1E1970EEE0", "B4A14EC82A4CC7044C8F7CB5");
+			sourceTree = "<group>";
+		};
+		7B594B6DB375E1BF3F23CDD6 = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "text.plist.xml";
+			path = "Resources/Info.plist";
+			sourceTree = "SOURCE_ROOT";
+		};
+		FE0A091FDBFB3E9C31B7A1BD = {
+			isa = "PBXGroup";
+			name = "Products";
+			children = ("DA9B451CF1632E6DBFA23419", "027D487ADCC247023A2A3FF3", "6D0E3C8BC56CE3D298EEF6BF");
+			sourceTree = "<group>";
+		};
+		2EB2D8158FC6EF9EB19CB439 = {
+			isa = "PBXGroup";
+			children = ("3EA50D006D022AB536A16620", "C3AD78852030F4678E90BA3B", "8D0C262BC1F470E9DD174206", "7B594B6DB375E1BF3F23CDD6", "FE0A091FDBFB3E9C31B7A1BD");
+			sourceTree = "<group>";
+		};
+		657EE81F72B04E344AD48704 = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = "14.0";
+				SDKROOT = "macosx";
+				SWIFT_VERSION = "5.0";
+				CLANG_ENABLE_MODULES = "YES";
+				CODE_SIGN_STYLE = "Automatic";
+				CODE_SIGN_IDENTITY = "-";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				DEBUG_INFORMATION_FORMAT = "dwarf";
+				ENABLE_TESTABILITY = "YES";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG";
+			};
+		};
+		AA45CF0082C822F46E1F835F = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = "14.0";
+				SDKROOT = "macosx";
+				SWIFT_VERSION = "5.0";
+				CLANG_ENABLE_MODULES = "YES";
+				CODE_SIGN_STYLE = "Automatic";
+				CODE_SIGN_IDENTITY = "-";
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+			};
+		};
+		BD59A88C5EC2D65E34727A49 = {
+			isa = "XCConfigurationList";
+			buildConfigurations = ("657EE81F72B04E344AD48704", "AA45CF0082C822F46E1F835F");
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		36140D01EAD8B2B00AE24BF3 = {
+			isa = "PBXFrameworksBuildPhase";
+			buildActionMask = "2147483647";
+			files = ();
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		06178A2834742106FF627ACC = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				PRODUCT_NAME = "FocusDockCore";
+				PRODUCT_BUNDLE_IDENTIFIER = "local.focusdock.focusdockcore";
+				GENERATE_INFOPLIST_FILE = "YES";
+				MACH_O_TYPE = "staticlib";
+				DEFINES_MODULE = "YES";
+				SKIP_INSTALL = "YES";
+			};
+		};
+		036D31F7A4E70EF2B7DD6715 = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				PRODUCT_NAME = "FocusDockCore";
+				PRODUCT_BUNDLE_IDENTIFIER = "local.focusdock.focusdockcore";
+				GENERATE_INFOPLIST_FILE = "YES";
+				MACH_O_TYPE = "staticlib";
+				DEFINES_MODULE = "YES";
+				SKIP_INSTALL = "YES";
+			};
+		};
+		8D7A1770D0B0E4CC152DA1FC = {
+			isa = "XCConfigurationList";
+			buildConfigurations = ("06178A2834742106FF627ACC", "036D31F7A4E70EF2B7DD6715");
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		542BF5A9ADA8A395E6692A60 = {
+			isa = "PBXNativeTarget";
+			name = "FocusDockCore";
+			productName = "FocusDockCore";
+			productReference = "DA9B451CF1632E6DBFA23419";
+			productType = "com.apple.product-type.framework";
+			buildConfigurationList = "8D7A1770D0B0E4CC152DA1FC";
+			buildPhases = ("D0851BEFFEA71FA22186FC23", "36140D01EAD8B2B00AE24BF3");
+			buildRules = ();
+			dependencies = ();
+		};
+		C9C64A9F65009C0B5F66F12F = {
+			isa = "PBXBuildFile";
+			fileRef = "DA9B451CF1632E6DBFA23419";
+		};
+		D6A7167BF1B594FB9CFBCD26 = {
+			isa = "PBXContainerItemProxy";
+			containerPortal = "98F54143AB4E86B28C3AFEE0";
+			proxyType = "1";
+			remoteGlobalIDString = "542BF5A9ADA8A395E6692A60";
+			remoteInfo = "FocusDockCore";
+		};
+		F250856E30DC19478AB7E595 = {
+			isa = "PBXTargetDependency";
+			target = "542BF5A9ADA8A395E6692A60";
+			targetProxy = "D6A7167BF1B594FB9CFBCD26";
+		};
+		43D609D39009D71D7A30B0DA = {
+			isa = "PBXFrameworksBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("C9C64A9F65009C0B5F66F12F");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		081B105B250028AB5563BA32 = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				PRODUCT_NAME = "干了吗";
+				PRODUCT_BUNDLE_IDENTIFIER = "local.focusdock.app";
+				GENERATE_INFOPLIST_FILE = "NO";
+				EXECUTABLE_NAME = "FocusDock";
+				PRODUCT_MODULE_NAME = "FocusDock";
+				INFOPLIST_FILE = "Resources/Info.plist";
+				ENABLE_APP_SANDBOX = "NO";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+			};
+		};
+		E523AABE65995AD1FF37A4D5 = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				PRODUCT_NAME = "干了吗";
+				PRODUCT_BUNDLE_IDENTIFIER = "local.focusdock.app";
+				GENERATE_INFOPLIST_FILE = "NO";
+				EXECUTABLE_NAME = "FocusDock";
+				PRODUCT_MODULE_NAME = "FocusDock";
+				INFOPLIST_FILE = "Resources/Info.plist";
+				ENABLE_APP_SANDBOX = "NO";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+			};
+		};
+		576DD4159BD7DCD4225CB810 = {
+			isa = "XCConfigurationList";
+			buildConfigurations = ("081B105B250028AB5563BA32", "E523AABE65995AD1FF37A4D5");
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		C47B12E409EB4C28CB747B24 = {
+			isa = "PBXNativeTarget";
+			name = "FocusDock";
+			productName = "FocusDock";
+			productReference = "027D487ADCC247023A2A3FF3";
+			productType = "com.apple.product-type.application";
+			buildConfigurationList = "576DD4159BD7DCD4225CB810";
+			buildPhases = ("C0BBD17BF7C64947E0FE2CD9", "43D609D39009D71D7A30B0DA");
+			buildRules = ();
+			dependencies = ("F250856E30DC19478AB7E595");
+		};
+		FAABFA03C9ABD748BF26FDFD = {
+			isa = "PBXBuildFile";
+			fileRef = "DA9B451CF1632E6DBFA23419";
+		};
+		B0C7262599495269E56D5161 = {
+			isa = "PBXContainerItemProxy";
+			containerPortal = "98F54143AB4E86B28C3AFEE0";
+			proxyType = "1";
+			remoteGlobalIDString = "542BF5A9ADA8A395E6692A60";
+			remoteInfo = "FocusDockCore";
+		};
+		728F7567293AE8385AB47B0D = {
+			isa = "PBXTargetDependency";
+			target = "542BF5A9ADA8A395E6692A60";
+			targetProxy = "B0C7262599495269E56D5161";
+		};
+		B27C60D92A0CBD4E9074CBAE = {
+			isa = "PBXFrameworksBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("FAABFA03C9ABD748BF26FDFD");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
+		A947CEF7065C23AFA7FB06F3 = {
+			isa = "XCBuildConfiguration";
+			name = "Debug";
+			buildSettings = {
+				PRODUCT_NAME = "FocusDockCoreTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "local.focusdock.focusdockcoretests";
+				GENERATE_INFOPLIST_FILE = "YES";
+				CODE_SIGNING_ALLOWED = "NO";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
+			};
+		};
+		B92210FC8D2A96A6BC1FF216 = {
+			isa = "XCBuildConfiguration";
+			name = "Release";
+			buildSettings = {
+				PRODUCT_NAME = "FocusDockCoreTests";
+				PRODUCT_BUNDLE_IDENTIFIER = "local.focusdock.focusdockcoretests";
+				GENERATE_INFOPLIST_FILE = "YES";
+				CODE_SIGNING_ALLOWED = "NO";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @loader_path/../Frameworks";
+			};
+		};
+		0427C0174B5A0B0425945608 = {
+			isa = "XCConfigurationList";
+			buildConfigurations = ("A947CEF7065C23AFA7FB06F3", "B92210FC8D2A96A6BC1FF216");
+			defaultConfigurationIsVisible = "0";
+			defaultConfigurationName = "Release";
+		};
+		B969D381251B4D5B1AC13812 = {
+			isa = "PBXNativeTarget";
+			name = "FocusDockCoreTests";
+			productName = "FocusDockCoreTests";
+			productReference = "6D0E3C8BC56CE3D298EEF6BF";
+			productType = "com.apple.product-type.bundle.unit-test";
+			buildConfigurationList = "0427C0174B5A0B0425945608";
+			buildPhases = ("E0A88635A4ACACE781D4BA84", "B27C60D92A0CBD4E9074CBAE");
+			buildRules = ();
+			dependencies = ("728F7567293AE8385AB47B0D");
+		};
+		98F54143AB4E86B28C3AFEE0 = {
+			isa = "PBXProject";
+			attributes = {
+				LastUpgradeCheck = "1600";
+			};
+			buildConfigurationList = "BD59A88C5EC2D65E34727A49";
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = "zh_CN";
+			knownRegions = ("zh_CN", "en", "Base");
+			mainGroup = "2EB2D8158FC6EF9EB19CB439";
+			productRefGroup = "FE0A091FDBFB3E9C31B7A1BD";
+			projectDirPath = "";
+			projectRoot = "";
+			targets = ("542BF5A9ADA8A395E6692A60", "C47B12E409EB4C28CB747B24", "B969D381251B4D5B1AC13812");
+		};
+	};
+	rootObject = "98F54143AB4E86B28C3AFEE0";
+}

@@ -1,0 +1,18 @@
+{
+  "before-ui-refactor-source.zip": {
+    "bytes": 16602,
+    "sha256": "f4a921b5ef880bce1e7c7206c9966917ed49079289d1d85e3c7480fd95c75ddd"
+  },
+  "current-source-0.2.0-build3.zip": {
+    "bytes": 52278,
+    "sha256": "3d0054ba2836e410e7d035141bec5c29d22161a0ece38ea5632801a47271cfef"
+  },
+  "focusdock-before-rename-app.zip": {
+    "bytes": 363593,
+    "sha256": "f17236d1dfc6909ee3ec9c2a3048091bc011bfc6409d95d93c135c9aacc4a36c"
+  },
+  "ganlema-0.2.0-build3-app.zip": {
+    "bytes": 363549,
+    "sha256": "ae1db8d1b0d52fc8f88cd9406865b28b1aba4aca1cd4eccb6612750586e8c65b"
+  }
+}
