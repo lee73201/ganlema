@@ -10,6 +10,9 @@ extension FloatingAppearance {
 /// Shared by the live panel and settings previews; sizes and corner paths come from Core.
 struct CapsuleAppearanceView: View {
     let appearance: FloatingAppearance
+    @Environment(\.colorScheme) private var inheritedScheme
+    private var effectiveScheme: ColorScheme { appearance.shape == .island ? .dark : appearance.scheme ?? inheritedScheme }
+    private var textColor: Color { effectiveScheme == .dark ? .white.opacity(0.92) : .black.opacity(0.85) }
     var count: Int
     var deadline: String?
     var urgent: Bool
@@ -29,15 +32,15 @@ struct CapsuleAppearanceView: View {
                 } else {
                     Text(appearance.content == .deadline ? (deadline ?? "暂无截止任务") : "干了吗")
                         .font(.system(size: 12, weight: .semibold)).lineLimit(1)
-                    if appearance.content == .count { Text("\(count)").font(.system(size: 11)).monospacedDigit().foregroundStyle(.secondary) }
+                    if appearance.content == .count { Text("\(count)").font(.system(size: 11)).monospacedDigit().foregroundStyle(textColor.opacity(0.65)) }
                 }
             }
             if urgent && appearance.shape != .circle { Circle().fill(.orange.opacity(0.8)).frame(width: 4, height: 4) }
         }
         .padding(.horizontal, compact ? 3 : 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .foregroundStyle(appearance.shape == .island ? Color.white.opacity(0.92) : .primary)
-        .preferredColorScheme(appearance.shape == .island ? .dark : appearance.scheme)
+        .foregroundStyle(textColor)
+        .environment(\.colorScheme, effectiveScheme)
     }
 }
 

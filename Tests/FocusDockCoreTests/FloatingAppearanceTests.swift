@@ -108,3 +108,33 @@ import FocusDockCore
     session.resume(at: start.addingTimeInterval(1600))
     #expect(session.isFinished(at: start.addingTimeInterval(1600)))
 }
+@Test func draggingAcrossScreenKeepsCollapseReopenAnchorStable() {
+    let screen = CGRect(x: -1440, y: -80, width: 1440, height: 900)
+    for x in [-1432.0, -900.0, -420.0] {
+        for y in [-72.0, 200.0] {
+            let expanded = CGRect(x: x, y: y, width: 412, height: 560)
+            for shape in CapsuleShape.allCases {
+                var appearance = FloatingAppearance(); appearance.shape = shape
+                let content = appearance.size()
+                let capsule = FloatingGeometry.capsuleFrame(attachedTo: expanded, size: CGSize(width: content.width + 8, height: content.height + 8), screen: screen)
+                let reopened = FloatingGeometry.expandedFrame(capsule: capsule, size: expanded.size, screen: screen)
+                #expect(abs(reopened.minX - expanded.minX) < 0.01 && abs(reopened.minY - expanded.minY) < 0.01)
+            }
+        }
+    }
+}
+@Test func changingPresetKeepsNearestVisibleEdgesWithoutJumping() {
+    let screen = CGRect(x: -1440, y: -80, width: 1440, height: 900)
+    for initial in [CGRect(x: -1432, y: 700, width: 228, height: 70), CGRect(x: -236, y: -72, width: 228, height: 70)] {
+        for shape in CapsuleShape.allCases {
+            for scale in CapsuleScale.allCases {
+                var settings = FloatingAppearance(); settings.shape = shape; settings.scale = scale
+                let content = settings.size()
+                let changed = FloatingGeometry.resizedCapsuleFrame(from: initial, size: CGSize(width: content.width + 8, height: content.height + 8), screen: screen)
+                #expect(screen.contains(changed))
+                if initial.midX < screen.midX { #expect(changed.minX == initial.minX) } else { #expect(changed.maxX == initial.maxX) }
+                if initial.midY >= screen.midY { #expect(changed.maxY == initial.maxY) } else { #expect(changed.minY == initial.minY) }
+            }
+        }
+    }
+}

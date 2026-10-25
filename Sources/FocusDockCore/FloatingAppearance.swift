@@ -88,6 +88,21 @@ public enum FloatingGeometry {
         let y = (expandDown ?? (capsule.midY >= screen.midY)) ? capsule.maxY - height : capsule.minY
         return CGRect(x: min(max(x, screen.minX), screen.maxX - width), y: min(max(y, screen.minY), screen.maxY - height), width: width, height: height)
     }
+    /// Size/shape changes retain the nearest visible edge rather than moving a small
+    /// circle away from the left edge just to preserve a historical top-right anchor.
+    public static func resizedCapsuleFrame(from frame: CGRect, size: CGSize, screen: CGRect) -> CGRect {
+        let width = min(size.width, screen.width), height = min(size.height, screen.height)
+        let x = frame.midX < screen.midX ? frame.minX : frame.maxX - width
+        let y = frame.midY >= screen.midY ? frame.maxY - height : frame.minY
+        return CGRect(x: min(max(x, screen.minX), screen.maxX - width), y: min(max(y, screen.minY), screen.maxY - height), width: width, height: height)
+    }
+    /// Attach a collapsed entry to the nearest side after dragging an expanded panel.
+    /// Reopening with automatic direction must reconstruct the same expanded frame.
+    public static func capsuleFrame(attachedTo frame: CGRect, size: CGSize, screen: CGRect) -> CGRect {
+        let x = frame.midX >= screen.midX ? frame.maxX - size.width : frame.minX
+        let y = frame.midY >= screen.midY ? frame.maxY - size.height : frame.minY
+        return CGRect(x: x, y: y, width: size.width, height: size.height)
+    }
     public static func snapped(_ frame: CGRect, in screen: CGRect, distance: CGFloat = 18, inset: CGFloat = 8) -> CGRect {
         var f = frame
         f.origin.x = min(max(f.minX, screen.minX), screen.maxX - f.width)

@@ -7,8 +7,8 @@ struct TaskRowView: View {
     @ObservedObject var controller: PanelWindowController
     @State private var title = ""
     @State private var editingDate = false
+    @State private var editingTitle = false
     @State private var quickDate: Date?
-    @FocusState private var titleFocused: Bool
 
     var body: some View {
         VStack(spacing: 8) {
@@ -20,16 +20,25 @@ struct TaskRowView: View {
                         .frame(width: 22, height: 24)
                 }.buttonStyle(.plain).accessibilityLabel(item.isCompleted ? "恢复：\(item.title)" : "完成：\(item.title)")
                 VStack(alignment: .leading, spacing: 5) {
-                    TextField("任务标题", text: $title, axis: .vertical)
-                        .textFieldStyle(.plain).font(.system(size: 12, weight: .medium))
-                        .foregroundStyle(item.isCompleted ? .secondary : .primary)
-                        .lineLimit(1...3).focused($titleFocused).onSubmit { commitTitle(); titleFocused = false }
-                        .accessibilityLabel("快速编辑标题：\(item.title)")
+                    if editingTitle {
+                        InlineTitleField(text: $title, label: "快速编辑标题：\(item.title)", completed: item.isCompleted) {
+                            commitTitle(); editingTitle = false
+                        } onCancel: {
+                            title = item.title; editingTitle = false
+                        }.frame(height: 20)
+                    } else {
+                        Button { NSApp.activate(ignoringOtherApps: true); controller.window?.makeKeyAndOrderFront(nil); title = item.title; editingTitle = true } label: {
+                            Text(item.title).font(.system(size: 12, weight: .medium))
+                                .foregroundStyle(item.isCompleted ? .secondary : .primary)
+                                .lineLimit(3).multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }.buttonStyle(.plain).accessibilityLabel("快速编辑标题：\(item.title)")
+                    }
                     metadata
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, 3)
                 Menu {
-                    Button("专注 25 分钟") { titleFocused = false; commitTitle(); controller.startFocus(item, minutes: 25) }
-                    Button("专注 50 分钟") { titleFocused = false; commitTitle(); controller.startFocus(item, minutes: 50) }
+                    Button("专注 25 分钟") { editingTitle = false; commitTitle(); controller.startFocus(item, minutes: 25) }
+                    Button("专注 50 分钟") { editingTitle = false; commitTitle(); controller.startFocus(item, minutes: 50) }
                     Divider()
                     Button("完整编辑") { commitTitle(); controller.beginEditing(item) }
                 } label: { Image(systemName: "timer").font(.system(size: 12)).foregroundStyle(.secondary) }
@@ -59,13 +68,15 @@ struct TaskRowView: View {
         .padding(.horizontal, 10).padding(.vertical, 9)
         .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 9))
         .onAppear { title = item.title }
-        .onChange(of: item.title) { _, value in if !titleFocused { title = value } }
-        .onChange(of: titleFocused) { _, focused in
-            controller.setQuickEditing(item.id, active: focused || editingDate)
-            if !focused { commitTitle() }
+        .onChange(of: item.title) { _, value in if !editingTitle { title = value } }
+        .onChange(of: editingTitle) { _, active in
+            if !active { commitTitle() }
+            controller.setQuickEditing(item.id, active: active || editingDate)
         }
-        .onChange(of: editingDate) { _, active in controller.setQuickEditing(item.id, active: active || titleFocused) }
-        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification, object: controller.window)) { _ in titleFocused = false }
+        .onChange(of: editingDate) { _, active in controller.setQuickEditing(item.id, active: active || editingTitle) }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification, object: controller.window)) { _ in
+            if editingTitle { commitTitle(); editingTitle = false }
+        }
         .onDisappear { commitTitle(); controller.setQuickEditing(item.id, active: false) }
         .contextMenu { Button("完整编辑") { commitTitle(); controller.beginEditing(item) } }
     }
@@ -78,7 +89,7 @@ struct TaskRowView: View {
     private var metadata: some View {
         HStack(spacing: 7) {
             Button {
-                titleFocused = false; quickDate = item.dueDate; editingDate.toggle()
+                editingTitle = false; quickDate = item.dueDate; editingDate.toggle()
             } label: {
                 HStack(spacing: 3) {
                     Image(systemName: "calendar")
@@ -88,7 +99,7 @@ struct TaskRowView: View {
             }.buttonStyle(.plain).help("在列表中编辑截止时间").accessibilityLabel("快速编辑日期：\(item.title)")
             Menu {
                 ForEach(TaskPriority.allCases) { priority in
-                    Button { titleFocused = false; controller.quickUpdate(item, priority: priority) } label: {
+                    Button { editingTitle = false; controller.quickUpdate(item, priority: priority) } label: {
                         Label(priority.title, systemImage: item.priority == priority ? "checkmark" : "flag")
                     }
                 }
@@ -100,4 +111,61 @@ struct TaskRowView: View {
             Spacer(minLength: 0)
         }.font(.system(size: 9))
     }
+}
+
+/// Explicit native field-editor focus for a nonactivating floating panel. Keyboard input
+/// cannot silently continue into the bottom composer when this inline editor appears.
+private struct InlineTitleField: NSViewRepresentable {
+    @Binding var text: String
+    let label: String
+    let completed: Bool
+    let onCommit: () -> Void
+    let onCancel: () -> Void
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+    func makeNSView(context: Context) -> NSTextField {
+        let field = InlineNativeTextField(string: text)
+        field.isBordered = false; field.isBezeled = false; field.drawsBackground = false
+        field.focusRingType = .none; field.font = .systemFont(ofSize: 12, weight: .medium)
+        field.textColor = completed ? .secondaryLabelColor : .labelColor
+        field.lineBreakMode = .byClipping
+        field.cell?.isScrollable = true
+        field.delegate = context.coordinator
+        field.setAccessibilityLabel(label)
+        DispatchQueue.main.async { [weak field] in
+            guard let field, let window = field.window else { return }
+            window.makeKeyAndOrderFront(nil)
+            window.makeFirstResponder(field)
+        }
+        return field
+    }
+    func updateNSView(_ field: NSTextField, context: Context) {
+        context.coordinator.parent = self
+        if field.currentEditor() == nil && field.stringValue != text { field.stringValue = text }
+        field.setAccessibilityLabel(label)
+    }
+    final class Coordinator: NSObject, NSTextFieldDelegate {
+        var parent: InlineTitleField
+        private var ended = false
+        init(_ parent: InlineTitleField) { self.parent = parent }
+        func controlTextDidChange(_ notification: Notification) {
+            if !ended, let field = notification.object as? NSTextField { parent.text = field.stringValue }
+        }
+        func controlTextDidEndEditing(_ notification: Notification) { finish(cancel: false) }
+        func control(_ control: NSControl, textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+            if commandSelector == #selector(NSResponder.insertNewline(_:)) {
+                guard !textView.hasMarkedText() else { return false }
+                parent.text = textView.string; finish(cancel: false, resigning: control.window); return true
+            }
+            if commandSelector == #selector(NSResponder.cancelOperation(_:)) { finish(cancel: true, resigning: control.window); return true }
+            return false
+        }
+        private func finish(cancel: Bool, resigning window: NSWindow? = nil) {
+            guard !ended else { return }; ended = true
+            window?.makeFirstResponder(nil)
+            if cancel { parent.onCancel() } else { parent.onCommit() }
+        }
+    }
+}
+private final class InlineNativeTextField: NSTextField {
+    override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }

@@ -47,9 +47,23 @@ struct AppearanceSettingsView: View {
                         row("毛玻璃材质") { Picker("毛玻璃材质", selection: settings.material) { ForEach(CapsuleMaterial.allCases, id: \.self) { Text($0.title).tag($0) } } }
                         row("颜色") { Picker("颜色", selection: settings.colorMode) { ForEach(CapsuleColorMode.allCases, id: \.self) { Text($0.title).tag($0) } } }
                         if controller.floatingAppearance.colorMode == .custom {
-                            ColorPicker("强调色", selection: Binding(get: { controller.floatingAppearance.accentColor }, set: { color in
-                                if let rgb = NSColor(color).usingColorSpace(.deviceRGB) { var value = controller.floatingAppearance; value.red = rgb.redComponent; value.green = rgb.greenComponent; value.blue = rgb.blueComponent; controller.floatingAppearance = value }
-                            }), supportsOpacity: false)
+                            HStack(spacing: 9) {
+                                Text("强调色").frame(width: 100, alignment: .leading)
+                                RoundedRectangle(cornerRadius: 5).fill(controller.floatingAppearance.accentColor).frame(width: 32, height: 22)
+                                ForEach(0..<5) { index in
+                                    let colors: [(String, Double, Double, Double)] = [("鼠尾草绿",0.44,0.59,0.51),("雾蓝",0.42,0.55,0.65),("暖灰",0.55,0.52,0.48),("柔和玫瑰",0.65,0.46,0.5),("石墨",0.35,0.38,0.4)]
+                                    let color = colors[index]
+                                    Button {
+                                        var value = controller.floatingAppearance
+                                        value.red = color.1; value.green = color.2; value.blue = color.3
+                                        controller.floatingAppearance = value
+                                    } label: { Circle().fill(Color(red: color.1, green: color.2, blue: color.3)).frame(width: 20, height: 20) }
+                                        .buttonStyle(.plain).accessibilityLabel(color.0).help(color.0)
+                                }
+                            }
+                            slider("红色分量", value: settings.red, range: 0...1, text: "\(Int(controller.floatingAppearance.red * 255))")
+                            slider("绿色分量", value: settings.green, range: 0...1, text: "\(Int(controller.floatingAppearance.green * 255))")
+                            slider("蓝色分量", value: settings.blue, range: 0...1, text: "\(Int(controller.floatingAppearance.blue * 255))")
                         }
                         slider("背景不透明度", value: settings.opacity, range: 0.15...1, text: "\(Int(controller.floatingAppearance.opacity * 100))%")
                         if controller.floatingAppearance.shape == .rectangle { slider("圆角", value: settings.cornerRadius, range: 4...24, text: "\(Int(controller.floatingAppearance.cornerRadius)) pt") }
@@ -78,7 +92,7 @@ struct AppearanceSettingsView: View {
         HStack { Text(title).frame(width: 100, alignment: .leading); content().labelsHidden().frame(maxWidth: .infinity) }
     }
     private func slider(_ title: String, value: Binding<Double>, range: ClosedRange<Double>, text: String) -> some View {
-        HStack { Text(title).frame(width: 100, alignment: .leading); Slider(value: value, in: range); Text(text).font(.system(size: 10).monospacedDigit()).foregroundStyle(.secondary).frame(width: 58, alignment: .trailing) }
+        HStack { Text(title).frame(width: 100, alignment: .leading); Slider(value: value, in: range).accessibilityLabel(title); Text(text).font(.system(size: 10).monospacedDigit()).foregroundStyle(.secondary).frame(width: 58, alignment: .trailing) }
     }
 }
 

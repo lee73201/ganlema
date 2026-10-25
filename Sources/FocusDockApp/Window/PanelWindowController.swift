@@ -73,7 +73,18 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         didSet { defaults.set(deadlineGrowthEnabled, forKey: "deadlineGrowthEnabled"); updateUrgency() }
     }
     @Published var floatingAppearance: FloatingAppearance {
-        didSet { floatingAppearance.save(to: defaults); applyFrame(); cancelTimers(); send(interaction.isInside ? .enter : .leave); refreshPointer() }
+        didSet {
+            floatingAppearance.save(to: defaults)
+            if oldValue.size(urgency: urgency) != floatingAppearance.size(urgency: urgency), let window, let screen = window.screen {
+                if interaction.isExpanded { updateAnchor(from: window.frame, in: screen) }
+                else {
+                    let frame = FloatingGeometry.resizedCapsuleFrame(from: window.frame, size: capsuleWindowSize, screen: screen.visibleFrame)
+                    placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: frame.maxX, y: frame.maxY), in: screen.visibleFrame)
+                }
+                savePosition()
+            }
+            applyFrame(); cancelTimers(); send(interaction.isInside ? .enter : .leave); refreshPointer()
+        }
     }
     let focusTimer: FocusTimer
     private var settingsWindow: NSWindow?
@@ -140,6 +151,7 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         panel.delegate = self
         let host = TrackingHostingView(rootView: DockView(controller: self, repository: repository, habits: habits))
         host.sizingOptions = []
+        panel.initialFirstResponder = host
         host.onEnter = { [weak self] in self?.refreshPointer() }
         host.onLeave = { [weak self] in self?.refreshPointer() }
         let material = PanelMaterialView(host: host)
@@ -254,6 +266,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
             applyFrame(animated: true)
         }
         applyPendingUrgency()
+        if ProcessInfo.processInfo.environment["FOCUSDOCK_DEBUG_INTERACTION"] == "1" {
+            window?.setAccessibilityHelp("inside=\(interaction.isInside) pinned=\(interaction.isPinned) editing=\(interaction.isEditing) dragging=\(interaction.isDragging) menu=\(interaction.isMenuTracking) depth=\(menuTrackingDepth) event=\(String(describing: event))")
+        }
     }
 
     private func cancelTimers() { openTimer?.cancel(); closeTimer?.cancel(); openTimer = nil; closeTimer = nil }
@@ -376,6 +391,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         // Polling independently lets rounded empty corners pass through, then re-enables on entry.
         window.ignoresMouseEvents = !inside
         if inside != interaction.isInside { send(inside ? .enter : .leave) }
+        if ProcessInfo.processInfo.environment["FOCUSDOCK_DEBUG_INTERACTION"] == "1" {
+            window.setAccessibilityHelp("inside=\(interaction.isInside) pinned=\(interaction.isPinned) editing=\(interaction.isEditing) dragging=\(interaction.isDragging) menu=\(interaction.isMenuTracking) depth=\(menuTrackingDepth) pointer=\(point) local=\(local) frame=\(window.frame)")
+        }
     }
     private func perform(_ action: () throws -> Void) {
         do { try action() } catch { errorMessage = error.localizedDescription }
@@ -397,7 +415,12 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
             displayID = screen.focusDockID
             var frame = window.frame
             if floatingAppearance.edgeSnap { frame = FloatingGeometry.snapped(frame, in: screen.visibleFrame) }
-            updateAnchor(from: frame, in: screen)
+            if interaction.isExpanded {
+                expandsLeft = frame.midX >= screen.visibleFrame.midX
+                expandsDown = frame.midY >= screen.visibleFrame.midY
+                let capsule = FloatingGeometry.capsuleFrame(attachedTo: frame, size: capsuleWindowSize, screen: screen.visibleFrame)
+                placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: capsule.maxX, y: capsule.maxY), in: screen.visibleFrame)
+            } else { updateAnchor(from: frame, in: screen) }
             applyFrame()
             savePosition()
         }
@@ -540,6 +563,7 @@ private extension NSScreen {
 
 private final class TrackingHostingView<Content: View>: NSHostingView<Content> {
     override var isOpaque: Bool { false }
+    override var acceptsFirstResponder: Bool { true }
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
     var onEnter: (() -> Void)?
     var onLeave: (() -> Void)?
