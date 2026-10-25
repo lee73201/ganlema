@@ -30,6 +30,14 @@ struct DockView: View {
             RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : 25)
                 .strokeBorder(.primary.opacity(0.10), lineWidth: 0.5).allowsHitTesting(false)
         }
+        .overlay(alignment: .bottomTrailing) {
+            if controller.interaction.isExpanded {
+                Image(systemName: "arrow.up.left.and.arrow.down.right").font(.system(size: 8)).foregroundStyle(.secondary.opacity(0.5))
+                    .frame(width: 18, height: 18).overlay(ResizeRegion(controller: controller))
+                    .padding(2).help("拖动调整大小 · 双击恢复默认大小")
+                    .accessibilityLabel("调整窗口大小")
+            }
+        }
         .clipShape(RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : 25))
         .preferredColorScheme(controller.theme.colorScheme)
         .tint(DockStyle.accent)
@@ -58,11 +66,17 @@ struct DockView: View {
 
     private var expanded: some View {
         VStack(spacing: 0) {
-            VStack(spacing: 16) {
-                clockHeader
-                progress
-                tabs
-            }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
+            if controller.editor != nil || controller.capture != nil {
+                Color.clear.frame(height: 16)
+                    .overlay(DragRegion(controller: controller))
+                    .help("拖动以移动编辑窗口")
+            } else {
+                VStack(spacing: 16) {
+                    clockHeader
+                    progress
+                    tabs
+                }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
+            }
             if let session = controller.capture {
                 TaskCaptureView(session: session, controller: controller).id(session.id)
             } else if controller.voicePresented {
@@ -111,6 +125,9 @@ struct DockView: View {
                 Button("启用系统提醒") { Task { await controller.reminders.enable() } }
                 Button("收起窗口", systemImage: "minus") { controller.collapse() }.disabled(controller.hasEditor)
                 Button("移到鼠标所在屏幕") { controller.moveToPointerScreen() }
+                Button("放大窗口") { controller.scaleWindow(1.15) }
+                Button("缩小窗口") { controller.scaleWindow(1 / 1.15) }
+                Button("恢复默认窗口大小") { controller.resetWindowSize() }
                 Button("重置当前屏幕位置") { controller.resetPosition() }
             } label: {
                 Image(systemName: "gearshape").font(.system(size: 13)).foregroundStyle(.secondary)

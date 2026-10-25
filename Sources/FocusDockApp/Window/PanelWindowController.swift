@@ -31,13 +31,30 @@ struct TaskEditorSession: Identifiable {
 final class FloatingPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
+    private func handleSizingShortcut(_ event: NSEvent) -> Bool {
+        let modifiers = event.modifierFlags.intersection([.command, .shift, .option, .control])
+        guard modifiers == .command || modifiers == [.command, .shift],
+              let controller = windowController as? PanelWindowController else { return false }
+        switch event.charactersIgnoringModifiers {
+        case "=", "+": controller.scaleWindow(1.15); return true
+        case "-": controller.scaleWindow(1 / 1.15); return true
+        default: return false
+        }
+    }
+    override func performKeyEquivalent(with event: NSEvent) -> Bool {
+        handleSizingShortcut(event) || super.performKeyEquivalent(with: event)
+    }
+    override func sendEvent(_ event: NSEvent) {
+        if event.type == .keyDown && handleSizingShortcut(event) { return }
+        super.sendEvent(event)
+    }
     override func cancelOperation(_ sender: Any?) {
         (windowController as? PanelWindowController)?.escape()
     }
 }
 
 @MainActor
-final class PanelWindowController: NSWindowController, ObservableObject {
+final class PanelWindowController: NSWindowController, ObservableObject, NSWindowDelegate {
     let repository: TaskRepository
     let habits: HabitRepository
     @Published private(set) var interaction = PanelInteraction()
@@ -68,6 +85,10 @@ final class PanelWindowController: NSWindowController, ObservableObject {
     private var displayID: String?
     private var placement = FocusDockCore.WindowPlacement()
     private var dragOrigin: NSPoint?
+    private var resizeOrigin: NSRect?
+    private var manualSize: PanelSizePreference?
+    private var applyingFrame = false
+    private var nativeResizeActive = false
     private var composerFocused = false
     private var materialView: PanelMaterialView<DockView>?
     private var pendingUrgency = DeadlineUrgency.normal
@@ -95,6 +116,7 @@ final class PanelWindowController: NSWindowController, ObservableObject {
         panel.isReleasedWhenClosed = false
         panel.appearance = theme.appearance
         window = panel
+        panel.delegate = self
         let host = TrackingHostingView(rootView: DockView(controller: self, repository: repository, habits: habits))
         host.sizingOptions = []
         host.onEnter = { [weak self] in self?.send(.enter) }
@@ -293,6 +315,7 @@ final class PanelWindowController: NSWindowController, ObservableObject {
             area(a.visibleFrame.intersection(window.frame)) < area(b.visibleFrame.intersection(window.frame))
         }
         if let screen {
+            if displayID != screen.focusDockID { loadWindowSize(for: screen) }
             displayID = screen.focusDockID
             placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: window.frame.maxX, y: window.frame.maxY), in: screen.visibleFrame)
             applyFrame()
@@ -309,6 +332,60 @@ final class PanelWindowController: NSWindowController, ObservableObject {
         select(screen)
         reveal()
     }
+    func resizeBegan() {
+        guard interaction.isExpanded else { return }
+        resizeOrigin = window?.frame; send(.dragging(true))
+    }
+    func resizeMoved(_ delta: NSSize) {
+        guard let initial = resizeOrigin, let screen = window?.screen ?? NSScreen.main else { return }
+        applyingFrame = true
+        window?.setFrame(PanelSizePreference.resizedFrame(from: initial, delta: delta, in: screen.visibleFrame), display: true)
+        applyingFrame = false
+    }
+    func resizeEnded() {
+        guard resizeOrigin != nil else { return }
+        resizeOrigin = nil
+        rememberWindowSize()
+        send(.dragging(false))
+        send(window?.frame.contains(NSEvent.mouseLocation) == true ? .enter : .leave)
+    }
+    func windowWillStartLiveResize(_ notification: Notification) {
+        guard interaction.isExpanded, !applyingFrame else { return }
+        nativeResizeActive = true; send(.dragging(true))
+    }
+    func windowDidEndLiveResize(_ notification: Notification) {
+        guard nativeResizeActive else { return }
+        nativeResizeActive = false; rememberWindowSize(); send(.dragging(false))
+        send(window?.frame.contains(NSEvent.mouseLocation) == true ? .enter : .leave)
+    }
+    func windowWillResize(_ sender: NSWindow, to frameSize: NSSize) -> NSSize {
+        guard !applyingFrame, interaction.isExpanded else { return frameSize }
+        return PanelSizePreference(frameSize).constrained(to: (sender.screen ?? NSScreen.main)?.visibleFrame.size ?? frameSize)
+    }
+    private func rememberWindowSize() {
+        guard let window, let screen = window.screen ?? NSScreen.main else { return }
+        displayID = screen.focusDockID
+        manualSize = PanelSizePreference(window.frame.size)
+        if let data = try? JSONEncoder().encode(manualSize) { defaults.set(data, forKey: "expandedSize.\(screen.focusDockID)") }
+        placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: window.frame.maxX, y: window.frame.maxY), in: screen.visibleFrame)
+        savePosition(); applyFrame()
+    }
+    private func loadWindowSize(for screen: NSScreen) {
+        manualSize = defaults.data(forKey: "expandedSize.\(screen.focusDockID)").flatMap { try? JSONDecoder().decode(PanelSizePreference.self, from: $0) }
+    }
+    func scaleWindow(_ factor: CGFloat) {
+        if !interaction.isExpanded { reveal() }
+        guard let window, let screen = window.screen ?? NSScreen.main else { return }
+        let size = PanelSizePreference(width: window.frame.width * factor, height: window.frame.height * factor).constrained(to: screen.visibleFrame.size)
+        manualSize = PanelSizePreference(size)
+        if let displayID, let data = try? JSONEncoder().encode(manualSize) { defaults.set(data, forKey: "expandedSize.\(displayID)") }
+        applyFrame()
+    }
+    func resetWindowSize() {
+        manualSize = nil
+        if let displayID { defaults.removeObject(forKey: "expandedSize.\(displayID)") }
+        applyFrame()
+    }
     func resetPosition() { placement = FocusDockCore.WindowPlacement(); applyFrame(); savePosition() }
 
     private func restoreForAvailableScreen() {
@@ -318,6 +395,7 @@ final class PanelWindowController: NSWindowController, ObservableObject {
     }
     private func select(_ screen: NSScreen) {
         displayID = screen.focusDockID
+        loadWindowSize(for: screen)
         if let data = defaults.data(forKey: "placement.\(screen.focusDockID)"),
            let saved = try? JSONDecoder().decode(FocusDockCore.WindowPlacement.self, from: data) { placement = saved }
         else { placement = FocusDockCore.WindowPlacement() }
@@ -326,9 +404,20 @@ final class PanelWindowController: NSWindowController, ObservableObject {
     }
     private func applyFrame() {
         guard let screen = NSScreen.screens.first(where: { $0.focusDockID == displayID }) ?? NSScreen.main else { return }
-        let size = interaction.isExpanded ? urgency.panelSize : urgency.capsuleSize
+        guard let window else { return }
+        let size = interaction.isExpanded ? PanelSizePreference.effective(manual: manualSize, urgency: urgency, visibleSize: screen.visibleFrame.size) : urgency.capsuleSize
+        applyingFrame = true
+        if interaction.isExpanded {
+            window.styleMask.insert(.resizable)
+            window.minSize = NSSize(width: min(PanelSizePreference.minimum.width, screen.visibleFrame.width), height: min(PanelSizePreference.minimum.height, screen.visibleFrame.height))
+            window.maxSize = screen.visibleFrame.size
+        } else {
+            window.styleMask.remove(.resizable)
+            window.minSize = .zero; window.maxSize = screen.visibleFrame.size
+        }
         materialView?.setExpanded(interaction.isExpanded)
-        window?.setFrame(placement.frame(size: size, in: screen.visibleFrame), display: true)
+        window.setFrame(placement.frame(size: size, in: screen.visibleFrame), display: true)
+        applyingFrame = false
     }
     func shutdown() { voiceStartTask?.cancel(); speech.cancel(); savePosition() }
     func savePosition() {

@@ -2,7 +2,7 @@
 
 这是 macOS 原生个人待办工具，最低系统为 macOS 14。使用 SwiftUI 展示界面、AppKit NSPanel 管理桌面悬浮窗、SwiftData 本地持久化，不使用网页容器。
 
-## 当前范围：第二阶段（用户已授权）
+## 当前范围：任务编辑 UI 重构与自由缩放（用户已授权）
 
 - 基础主面板 368×506pt，DDL 临近时有上限地增至 412×560pt；使用真正的 NSVisualEffectView behindWindow 毛玻璃，保留悬浮胶囊交互。
 - 固定时钟/日期、今日完成进度、待办/已完成/打卡三标签、底部添加入口；列表独立滚动。
@@ -28,3 +28,10 @@
 先检查本地环境；实际构建并执行测试。优先运行 `bash scripts/test.sh` 和 `bash scripts/build-app.sh`。有完整 Xcode 时也验证共享 FocusDock scheme。只能报告实际执行得到的结果，Xcode 不可用时明确区分 Swift 工具链构建与 Xcode 构建。
 
 持续维护 README.md 和 VALIDATION.md。新建 Swift 文件后运行 `python3 scripts/generate_xcodeproj.py` 同步 Xcode 文件引用。不要静默丢弃数据库错误、清空用户数据或插入演示待办。
+
+## 编辑器与窗口尺寸约束
+
+- 普通编辑与解析确认复用紧凑控件；保持原 TaskDraft/TodoItem 和数据库 schema，不为视觉改动重置记录。
+- 截止开关与无边框原生日期时间字段横排；日历/自定义提醒在面板内展开；提醒多选胶囊随宽度换行；三段优先级；底部固定取消/保存。
+- 支持边缘及右下角自由缩放，340×400pt 最小，上限为当前屏幕。尺寸与位置独立，按显示器保存。手动尺寸优先于默认 DDL 增长；恢复默认后再按 DDL 调整。
+- 缩放使用交互状态保护，不能触发悬停收起或丢失编辑输入。保留真正的 NSVisualEffectView。

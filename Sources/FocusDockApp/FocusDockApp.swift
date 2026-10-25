@@ -74,6 +74,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         let menu = NSMenu(title: "干了吗")
         menu.addItem(menuItem("打开干了吗", action: #selector(reveal), key: ""))
         menu.addItem(menuItem("移到鼠标所在屏幕", action: #selector(moveToCurrentScreen), key: ""))
+        let sizingMenu = NSMenu(title: "窗口大小")
+        sizingMenu.addItem(menuItem("放大窗口", action: #selector(enlargeWindow), key: "="))
+        sizingMenu.addItem(menuItem("缩小窗口", action: #selector(reduceWindow), key: "-"))
+        sizingMenu.addItem(menuItem("恢复默认窗口大小", action: #selector(resetWindowSize), key: ""))
+        let sizingItem = NSMenuItem(title: "窗口大小", action: nil, keyEquivalent: "")
+        sizingItem.submenu = sizingMenu
+        menu.addItem(sizingItem)
         menu.addItem(menuItem("重置当前屏幕位置", action: #selector(resetPosition), key: ""))
         menu.addItem(.separator())
         let themeMenu = NSMenu()
@@ -103,6 +110,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     }
     @objc private func reveal() { dock?.reveal() }
     @objc private func moveToCurrentScreen() { dock?.moveToPointerScreen() }
+    @objc private func enlargeWindow() { dock?.scaleWindow(1.15) }
+    @objc private func reduceWindow() { dock?.scaleWindow(1 / 1.15) }
+    @objc private func resetWindowSize() { dock?.resetWindowSize() }
     @objc private func resetPosition() { dock?.resetPosition() }
     @objc private func changeTheme(_ sender: NSMenuItem) {
         if let raw = sender.representedObject as? String, let theme = AppTheme(rawValue: raw) { dock?.theme = theme }

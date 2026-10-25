@@ -1,3 +1,5 @@
+> 后续 0.4.0 已完成编辑 UI 与自由缩放，且将用户在录音验收中确认保存的任务保留到正式库。当前结果见 [VALIDATION-EDITOR-UI.md](VALIDATION-EDITOR-UI.md)。
+
 # 0.3.1 录音结束后文字丢失修复
 
 日期：2026-10-25（Asia/Shanghai）。基于现有原生工程增量修复，版本 0.3.1 / build 5，Release，本机临时签名。

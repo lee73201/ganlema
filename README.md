@@ -1,10 +1,22 @@
-# 干了吗（FocusDock）0.3.1
+# 干了吗（FocusDock）0.4.0
 
 原生 macOS 悬浮待办与打卡工具：SwiftUI + AppKit NSPanel + SwiftData，macOS 14 起。本机数据，无账号。应用名称是「干了吗」，工程名与 Bundle ID 沿用 FocusDock。
 
 ## 打开、收起与退出
 
 运行 `build/干了吗.app`。悬停胶囊约 250ms 展开，移开约 550ms 收起；点击锁定，图钉解锁；拖动胶囊或时钟区移动。齿轮菜单可收起、换主题或重置位置。屏幕顶部勾号菜单 →「退出干了吗」会让应用完全退出；记录仍保留。编辑、录音、确认结果时不自动收起。
+
+## 任务编辑与自由缩放
+
+普通任务编辑与解析确认共用紧凑界面：任务标题/可选描述、横向截止开关及日期时间输入、可多选提醒胶囊、三段优先级。日期日历和自定义提醒在浮窗内展开，避免非激活面板弹出输入框的焦点问题。底部取消/保存固定，正文独立滚动；类别、备注及原有提醒设置继续保存到相同 TaskDraft/TodoItem 字段。
+
+展开后可拖动窗口边缘或右下角调整大小，最小 340×400pt，最大当前屏幕可见区域。提醒胶囊按宽度换行，文本在窗口内换行/截断，字体不随窗口拉伸。较宽窗口的编辑正文保持舒适阅读宽度。尺寸按显示器独立保存，收起展开和退出重开均恢复。
+
+菜单栏或齿轮 →「窗口大小」可放大/缩小/恢复默认；右下角双击也可恢复默认。代码同时提供 ⌘=（或 ⌘+）/⌘− 快捷键，但当前自动化工具不支持注入等号键，快捷键未作为已通过的实测项。
+
+**手动尺寸优先**，防止 DDL 定时刷新覆盖用户刚调整的窗口。选择「恢复默认窗口大小」后，展开面板重新使用 DDL 分级尺寸；胶囊始终保留紧凑的 DDL 提示。编辑、拖动和缩放时不会自动收起。
+
+本轮详细结果见 `VALIDATION-EDITOR-UI.md`。
 
 ## 自然语言添加与确认
 
@@ -64,6 +76,6 @@ bash scripts/build-app.sh
 open build/干了吗.app
 ```
 
-在受限自动化环境中可设置 `FOCUSDOCK_SWIFTPM_NO_SANDBOX=1`。Xcode 打开原 `FocusDock.xcodeproj`，选择 FocusDock scheme Run/Test。新增文件后运行 `python3 scripts/generate_xcodeproj.py` 同步引用。当前录音修复见 `VALIDATION-SPEECH-FIX.md`；第二阶段构建与系统通知限制见 `VALIDATION-PHASE2.md`，旧阶段记录见 `VALIDATION.md`。
+在受限自动化环境中可设置 `FOCUSDOCK_SWIFTPM_NO_SANDBOX=1`。Xcode 打开原 `FocusDock.xcodeproj`，选择 FocusDock scheme Run/Test。新增文件后运行 `python3 scripts/generate_xcodeproj.py` 同步引用。当前版本界面和缩放验证见 `VALIDATION-EDITOR-UI.md`；录音修复见 `VALIDATION-SPEECH-FIX.md`；第二阶段通知限制及旧阶段记录分别见 `VALIDATION-PHASE2.md`、`VALIDATION.md`。
 
 `FocusDockQAFixtures` 是独立开发工具，不链接进应用。只有明确指定 `FOCUSDOCK_DATA_DIRECTORY` / `FOCUSDOCK_PREFERENCES_SUITE` 时才使用隔离验收数据，普通启动始终打开真实数据。测试用记录不会插入用户库。
