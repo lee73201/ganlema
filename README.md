@@ -1,4 +1,4 @@
-# 干了吗（FocusDock）0.3
+# 干了吗（FocusDock）0.3.1
 
 原生 macOS 悬浮待办与打卡工具：SwiftUI + AppKit NSPanel + SwiftData，macOS 14 起。本机数据，无账号。应用名称是「干了吗」，工程名与 Bundle ID 沿用 FocusDock。
 
@@ -21,9 +21,9 @@
 
 ## 语音输入
 
-点击底部麦克风 → 请求 Apple 语音识别与麦克风权限 → 边说边显示文字 →「结束录音」→ 可修改文字 →「解析待办」→ 核对卡片后保存。最长录音 55 秒，结束后最多等待 3 秒整理结果。取消会关闭音频引擎、忽略迟到回调，不保存录音文件。
+点击底部麦克风 → 请求 Apple 语音识别与麦克风权限 → 边说边显示文字 →「结束录音」→ 可修改文字 →「解析待办」→ 核对卡片后保存。最长录音 55 秒，结束后最多等待 15 秒整理结果；已有文字可直接用于解析。空的最终回调不会覆盖已有文字；失败或超时显示原因并保留可用结果。取消会关闭音频引擎、忽略迟到回调，不保存录音文件。
 
-使用 Apple 中文语音识别；支持本机识别时使用本机，否则可能需要网络并由 Apple 处理语音。权限关闭、网络/服务或输入设备不可用时显示原因，仍可输入文字。系统权限由 macOS 决定；当前开发机的真实口述识别尚未完成授权后的验收，不能将构建成功等同于识别成功。
+使用 Apple 中文语音识别；支持本机识别时使用本机，否则可能需要网络并由 Apple 处理语音。权限关闭、网络/服务或输入设备不可用时显示原因，仍可输入文字。系统权限由 macOS 决定；0.3.1 已由用户实际验证口述录入、结束后保留文字并进入任务确认；识别结果仍须人工核对。
 
 ## 已完成与打卡
 
@@ -64,6 +64,6 @@ bash scripts/build-app.sh
 open build/干了吗.app
 ```
 
-在受限自动化环境中可设置 `FOCUSDOCK_SWIFTPM_NO_SANDBOX=1`。Xcode 打开原 `FocusDock.xcodeproj`，选择 FocusDock scheme Run/Test。新增文件后运行 `python3 scripts/generate_xcodeproj.py` 同步引用。当前结果见 `VALIDATION-PHASE2.md`；旧阶段记录见 `VALIDATION.md`。
+在受限自动化环境中可设置 `FOCUSDOCK_SWIFTPM_NO_SANDBOX=1`。Xcode 打开原 `FocusDock.xcodeproj`，选择 FocusDock scheme Run/Test。新增文件后运行 `python3 scripts/generate_xcodeproj.py` 同步引用。当前录音修复见 `VALIDATION-SPEECH-FIX.md`；第二阶段构建与系统通知限制见 `VALIDATION-PHASE2.md`，旧阶段记录见 `VALIDATION.md`。
 
 `FocusDockQAFixtures` 是独立开发工具，不链接进应用。只有明确指定 `FOCUSDOCK_DATA_DIRECTORY` / `FOCUSDOCK_PREFERENCES_SUITE` 时才使用隔离验收数据，普通启动始终打开真实数据。测试用记录不会插入用户库。

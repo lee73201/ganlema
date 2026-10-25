@@ -104,19 +104,20 @@ struct VoiceCaptureView: View {
                     Button("重新录音") { Task { try? await speech.start() } }.buttonStyle(.bordered)
                 }
                 Spacer()
-                Button("解析待办") { controller.beginCapture(text) }.buttonStyle(.borderedProminent)
-                    .disabled(speech.isBusy || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                Button(speech.state == .finishing ? "用当前文字解析" : "解析待办") { controller.beginCapture(text) }.buttonStyle(.borderedProminent)
+                    .disabled(speech.state == .requesting || speech.state == .listening || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }.padding(.horizontal, 20).padding(.bottom, 14)
+            .onAppear { text = speech.transcript }
             .onChange(of: speech.transcript) { _, value in text = value }
             .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
     }
     private var status: String {
         switch speech.state {
-        case .idle: return "可修改识别文字，再解析并确认保存"
+        case .idle: return text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? "未得到识别文字，可重新录音或直接输入" : "已保留识别文字，可修改后解析并确认保存"
         case .requesting: return "正在请求语音识别与麦克风权限…"
         case .listening: return "正在聆听，最长 55 秒…"
-        case .finishing: return "正在整理识别结果…"
+        case .finishing: return "正在等待最终结果，已有文字会保留…"
         }
     }
 }

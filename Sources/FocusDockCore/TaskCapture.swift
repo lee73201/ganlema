@@ -14,7 +14,15 @@ public struct LocalTaskParser {
     public init() {}
     public func parse(_ input: String, now: Date = .now, calendar source: Calendar = .autoupdatingCurrent) -> [ParsedTask] {
         let calendar = HabitCalendar.calendar(source)
-        let text = input.replacingOccurrences(of: "(?:以及|并且|和)(?=今天|明天|后天|下周|周[一二三四五六日天])", with: "；", options: .regularExpression).replacingOccurrences(of: "然后", with: "；")
+        // Dictation can omit separators between two dated tasks. Split only from the
+        // second explicit day+clock, so a leading "提醒我明天…" stays one task.
+        let boundaryPattern = "(?:大后天|后天|明天|今天|今晚|(?:下下周|下周|本周|这周|周|星期)[一二三四五六日天])(?:凌晨|早上|早晨|上午|中午|下午|傍晚|晚上|夜里)?[0-9零〇一二两三四五六七八九十]+(?:[:：][0-9]{2}|点|时)"
+        let punctuated = NSMutableString(string: input)
+        if let expression = try? NSRegularExpression(pattern: boundaryPattern) {
+            let dates = expression.matches(in: input, range: NSRange(location: 0, length: (input as NSString).length))
+            for match in dates.dropFirst().reversed() { punctuated.insert("；", at: match.range.location) }
+        }
+        let text = (punctuated as String).replacingOccurrences(of: "(?:以及|并且|和)(?=今天|明天|后天|下周|周[一二三四五六日天])", with: "；", options: .regularExpression).replacingOccurrences(of: "然后", with: "；")
             .replacingOccurrences(of: "另外", with: "；").replacingOccurrences(of: "还有", with: "；")
         var clauses = text.components(separatedBy: CharacterSet(charactersIn: "，,。；;\n"))
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
