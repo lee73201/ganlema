@@ -27,7 +27,7 @@ struct DockView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay {
-            RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : 25)
+            RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : controller.capsuleRadius)
                 .strokeBorder(.primary.opacity(0.10), lineWidth: 0.5).allowsHitTesting(false)
         }
         .overlay(alignment: .bottomTrailing) {
@@ -38,8 +38,8 @@ struct DockView: View {
                     .accessibilityLabel("调整窗口大小")
             }
         }
-        .clipShape(RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : 25))
-        .preferredColorScheme(controller.theme.colorScheme)
+        .clipShape(RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : controller.capsuleRadius))
+        .preferredColorScheme(controller.interaction.isExpanded ? controller.theme.colorScheme : (controller.floatingAppearance.shape == .island ? .dark : controller.floatingAppearance.scheme))
         .tint(DockStyle.accent)
         .onChange(of: composerFocused) { _, value in controller.setComposerFocused(value) }
         .onChange(of: controller.captureSaved) { _, _ in taskInput = ""; tab = .tasks }
@@ -50,12 +50,7 @@ struct DockView: View {
     }
 
     private var capsule: some View {
-        HStack(spacing: 9) {
-            Image(systemName: "checkmark.circle.fill").font(.system(size: 22, weight: .regular)).foregroundStyle(DockStyle.accent)
-            Text("干了吗").font(.system(size: 13, weight: .semibold))
-            Text(controller.urgency == .normal ? "\(repository.items.filter { !$0.isCompleted }.count)" : "DDL")
-                .font(.system(size: 11, weight: .medium)).monospacedDigit().foregroundStyle(controller.urgency == .normal ? Color.secondary : Color.orange.opacity(0.85))
-        }
+        CapsuleAppearanceView(appearance: controller.floatingAppearance, count: repository.items.filter { !$0.isCompleted }.count, deadline: controller.nearestDeadlineTitle, urgent: controller.urgency != .normal)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(DragRegion(controller: controller, onClick: { controller.togglePin() }).frame(maxWidth: .infinity, maxHeight: .infinity))
         .accessibilityElement(children: .ignore)
@@ -77,6 +72,7 @@ struct DockView: View {
                     tabs
                 }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
             }
+            if !controller.hasEditor { FocusTimerBar(timer: controller.focusTimer) }
             if let session = controller.capture {
                 TaskCaptureView(session: session, controller: controller).id(session.id)
             } else if controller.voicePresented {
@@ -117,6 +113,8 @@ struct DockView: View {
             }.buttonStyle(.plain).accessibilityLabel(controller.interaction.isPinned ? "取消锁定" : "锁定展开")
             NotificationControl(reminders: controller.reminders)
             Menu {
+                Button("悬浮外观设置…") { controller.openAppearanceSettings() }
+                Divider()
                 Picker("外观", selection: $controller.theme) {
                     ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
                 }

@@ -1,3 +1,5 @@
+> 当前 0.5.0 外观/快速编辑/专注构建与验收状态见 [VALIDATION-APPEARANCE.md](VALIDATION-APPEARANCE.md)。完整 UI 验收因 Mac 锁屏尚未结束；以下保留旧阶段记录。
+
 > 后续 0.3.0 阶段的结果、系统权限限制和 GitHub 备份见 [VALIDATION-PHASE2.md](VALIDATION-PHASE2.md)。本文件保留为 0.2 历史记录。
 
 # 干了吗（FocusDock）0.2 验证记录

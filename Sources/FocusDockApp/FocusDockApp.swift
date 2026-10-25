@@ -82,6 +82,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         sizingItem.submenu = sizingMenu
         menu.addItem(sizingItem)
         menu.addItem(menuItem("重置当前屏幕位置", action: #selector(resetPosition), key: ""))
+        menu.addItem(menuItem("悬浮外观设置…", action: #selector(appearanceSettings), key: ","))
         menu.addItem(.separator())
         let themeMenu = NSMenu()
         for theme in AppTheme.allCases {
@@ -108,6 +109,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         }
         return true
     }
+    @objc private func appearanceSettings() { dock?.openAppearanceSettings() }
     @objc private func reveal() { dock?.reveal() }
     @objc private func moveToCurrentScreen() { dock?.moveToPointerScreen() }
     @objc private func enlargeWindow() { dock?.scaleWindow(1.15) }

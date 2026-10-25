@@ -45,6 +45,11 @@ final class FloatingPanel: NSPanel {
         handleSizingShortcut(event) || super.performKeyEquivalent(with: event)
     }
     override func sendEvent(_ event: NSEvent) {
+        if [.leftMouseDown, .rightMouseDown, .otherMouseDown].contains(event.type),
+           let controller = windowController as? PanelWindowController,
+           !controller.acceptsPointer(event.locationInWindow) {
+            ignoresMouseEvents = true; return
+        }
         if event.type == .keyDown && handleSizingShortcut(event) { return }
         super.sendEvent(event)
     }
@@ -67,12 +72,25 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     @Published var deadlineGrowthEnabled: Bool {
         didSet { defaults.set(deadlineGrowthEnabled, forKey: "deadlineGrowthEnabled"); updateUrgency() }
     }
+    @Published var floatingAppearance: FloatingAppearance {
+        didSet { floatingAppearance.save(to: defaults); applyFrame(); cancelTimers(); send(interaction.isInside ? .enter : .leave); refreshPointer() }
+    }
+    let focusTimer: FocusTimer
+    private var settingsWindow: NSWindow?
+    private var pointerTimer: AnyCancellable?
+    private var globalMouseMonitor: Any?
+    private var localMouseMonitor: Any?
+    private var expandsLeft = true
+    private var expandsDown = true
+    var nearestDeadlineTitle: String? { repository.items.filter { !$0.isCompleted && $0.dueDate != nil }.min { $0.dueDate! < $1.dueDate! }?.title }
+    var capsuleRadius: CGFloat { let size = window?.frame.size ?? capsuleWindowSize; return floatingAppearance.radius(in: NSSize(width: max(0, size.width - 8), height: max(0, size.height - 8))) }
+    private var capsuleWindowSize: NSSize { let size = floatingAppearance.size(urgency: urgency); return NSSize(width: size.width + 8, height: size.height + 8) }
     let speech = NativeSpeechService()
     let reminders = NativeReminderService()
     var hasEditor: Bool { editor != nil || editingHabit != nil || capture != nil || voicePresented }
     @Published var errorMessage: String?
     @Published var theme: AppTheme {
-        didSet { defaults.set(theme.rawValue, forKey: "theme"); window?.appearance = theme.appearance }
+        didSet { defaults.set(theme.rawValue, forKey: "theme"); applyFrame() }
     }
 
     private var openTimer: Task<Void, Never>?
@@ -90,6 +108,7 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     private var applyingFrame = false
     private var nativeResizeActive = false
     private var composerFocused = false
+    private var quickEditors = Set<UUID>()
     private var materialView: PanelMaterialView<DockView>?
     private var pendingUrgency = DeadlineUrgency.normal
     private var subscriptions = Set<AnyCancellable>()
@@ -100,6 +119,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         self.repository = repository
         self.habits = habits
         self.defaults = defaults
+        floatingAppearance = FloatingAppearance.load(from: defaults)
+        focusTimer = FocusTimer(defaults: defaults)
         deadlineGrowthEnabled = defaults.object(forKey: "deadlineGrowthEnabled") as? Bool ?? true
         theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "system") ?? .system
         super.init(window: nil)
@@ -119,10 +140,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         panel.delegate = self
         let host = TrackingHostingView(rootView: DockView(controller: self, repository: repository, habits: habits))
         host.sizingOptions = []
-        host.onEnter = { [weak self] in self?.send(.enter) }
-        host.onLeave = { [weak self] in self?.send(.leave) }
+        host.onEnter = { [weak self] in self?.refreshPointer() }
+        host.onLeave = { [weak self] in self?.refreshPointer() }
         let material = PanelMaterialView(host: host)
-        material.setExpanded(false)
         materialView = material
         panel.contentView = material
         screenObserver = NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification,
@@ -153,7 +173,13 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
             }
         ]
         restoreForAvailableScreen()
+        globalMouseMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.mouseMoved, .leftMouseDragged]) { [weak self] _ in Task { @MainActor in self?.refreshPointer() } }
+        localMouseMonitor = NSEvent.addLocalMonitorForEvents(matching: [.mouseMoved]) { [weak self] event in
+            Task { @MainActor in self?.refreshPointer() }; return event
+        }
+        pointerTimer = Timer.publish(every: 0.04, on: .main, in: .common).autoconnect().sink { [weak self] _ in self?.refreshPointer() }
         repository.$items.sink { [weak self] items in
+            if let self, let session = self.focusTimer.session, !items.contains(where: { $0.id == session.taskID && !$0.isCompleted }) { self.focusTimer.stop() }
             self?.reminders.update(items: items)
             self?.updateUrgency(items: items)
         }.store(in: &subscriptions)
@@ -175,6 +201,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     required init?(coder: NSCoder) { fatalError("Use init(repository:)") }
 
     deinit {
+        if let globalMouseMonitor { NSEvent.removeMonitor(globalMouseMonitor) }
+        if let localMouseMonitor { NSEvent.removeMonitor(localMouseMonitor) }
         openTimer?.cancel()
         closeTimer?.cancel()
         voiceStartTask?.cancel()
@@ -185,7 +213,10 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
 
     func showDock() { window?.orderFrontRegardless() }
     func reveal() { send(.reveal); window?.makeKeyAndOrderFront(nil) }
-    func togglePin() { send(.click); if interaction.isPinned { window?.makeKeyAndOrderFront(nil) } }
+    func togglePin() {
+        if !interaction.isExpanded && !floatingAppearance.clickToPin { send(.enter); send(.hoverElapsed); window?.makeKeyAndOrderFront(nil); return }
+        send(.click); if interaction.isPinned { window?.makeKeyAndOrderFront(nil) }
+    }
     func escape() { if hasEditor { endEditing() } else { collapse() } }
     func collapse() {
         guard !hasEditor else { return }
@@ -202,20 +233,26 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         case .scheduleOpen:
             cancelTimers()
             openTimer = Task { [weak self] in
-                do { try await Task.sleep(for: .seconds(PanelInteraction.hoverDelay)) } catch { return }
+                do { try await Task.sleep(for: .seconds(self?.floatingAppearance.normalized.hoverDelay ?? PanelInteraction.hoverDelay)) } catch { return }
                 guard !Task.isCancelled else { return }
                 self?.send(.hoverElapsed)
             }
         case .scheduleClose:
             cancelTimers()
             closeTimer = Task { [weak self] in
-                do { try await Task.sleep(for: .seconds(PanelInteraction.collapseDelay)) } catch { return }
+                do { try await Task.sleep(for: .seconds(self?.floatingAppearance.normalized.collapseDelay ?? PanelInteraction.collapseDelay)) } catch { return }
                 guard !Task.isCancelled else { return }
                 self?.send(.collapseElapsed)
             }
         case .none: break
         }
-        if wasExpanded != interaction.isExpanded { applyFrame() }
+        if wasExpanded != interaction.isExpanded {
+            if interaction.isExpanded, let frame = window?.frame, let screen = window?.screen {
+                expandsLeft = frame.midX >= screen.visibleFrame.midX
+                expandsDown = frame.midY >= screen.visibleFrame.midY
+            }
+            applyFrame(animated: true)
+        }
         applyPendingUrgency()
     }
 
@@ -267,7 +304,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         applyFrame()
     }
     func setComposerFocused(_ focused: Bool) { composerFocused = focused; syncEditingState() }
-    private func syncEditingState() { send(.editing(hasEditor || composerFocused)) }
+    func setQuickEditing(_ id: UUID, active: Bool) { if active { quickEditors.insert(id) } else { quickEditors.remove(id) }; syncEditingState() }
+    private func syncEditingState() { send(.editing(hasEditor || composerFocused || !quickEditors.isEmpty)) }
     func beginEditingHabit(_ habit: Habit) {
         editor = nil
         editingHabit = habit
@@ -297,8 +335,48 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
             if let due = draft.dueDate, due > .now, !draft.reminderOffsets.isEmpty { Task { [weak self] in await self?.reminders.enable() } }
         } catch { errorMessage = error.localizedDescription }
     }
-    func toggle(_ item: TodoItem) { perform { try repository.toggleCompletion(item) } }
-    func delete(_ item: TodoItem) { perform { try repository.delete(item) } }
+    func quickUpdate(_ item: TodoItem, title: String? = nil, dueDate: Date?? = nil, priority: TaskPriority? = nil) {
+        var draft = TaskDraft(item: item)
+        if let title { draft.title = title }; if let dueDate { draft.dueDate = dueDate }; if let priority { draft.priority = priority }
+        do {
+            try repository.update(item, with: draft)
+            if dueDate != nil, let due = draft.dueDate, due > .now, !draft.reminderOffsets.isEmpty { Task { [weak self] in await self?.reminders.enable() } }
+        } catch { errorMessage = error.localizedDescription }
+    }
+    func toggle(_ item: TodoItem) {
+        perform { try repository.toggleCompletion(item) }
+        if item.isCompleted && focusTimer.session?.taskID == item.id { focusTimer.stop() }
+    }
+    func delete(_ item: TodoItem) {
+        let id = item.id; perform { try repository.delete(item) }
+        if !repository.items.contains(where: { $0.id == id }) && focusTimer.session?.taskID == id { focusTimer.stop() }
+    }
+    func startFocus(_ item: TodoItem, minutes: Int) { focusTimer.start(item, minutes: minutes) }
+    func openAppearanceSettings() {
+        if let settingsWindow { settingsWindow.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
+        let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 520, height: 740), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
+        panel.title = "悬浮外观 · 干了吗"; panel.isReleasedWhenClosed = false
+        panel.minSize = NSSize(width: 480, height: 580)
+        let host = NSHostingView(rootView: AppearanceSettingsView(controller: self))
+        let glass = PanelMaterialView(host: host); glass.configure(expanded: true, appearance: floatingAppearance)
+        panel.contentView = glass; panel.center(); settingsWindow = panel
+        panel.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true)
+    }
+    func acceptsPointer(_ local: NSPoint) -> Bool {
+        guard let window else { return false }
+        if interaction.isExpanded { return FloatingGeometry.contains(local, size: window.frame.size, radius: 18) }
+        return FloatingGeometry.contains(NSPoint(x: local.x - 4, y: local.y - 4), size: NSSize(width: window.frame.width - 8, height: window.frame.height - 8), radius: capsuleRadius)
+    }
+    private func refreshPointer() {
+        guard let window, !interaction.isDragging else { return }
+        let point = NSEvent.mouseLocation
+        let local = NSPoint(x: point.x - window.frame.minX, y: point.y - window.frame.minY)
+        let inside = acceptsPointer(local)
+        // A borderless transparent NSPanel is rectangular at the window-server level.
+        // Polling independently lets rounded empty corners pass through, then re-enables on entry.
+        window.ignoresMouseEvents = !inside
+        if inside != interaction.isInside { send(inside ? .enter : .leave) }
+    }
     private func perform(_ action: () throws -> Void) {
         do { try action() } catch { errorMessage = error.localizedDescription }
     }
@@ -317,10 +395,10 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         if let screen {
             if displayID != screen.focusDockID { loadWindowSize(for: screen) }
             displayID = screen.focusDockID
-            placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: window.frame.maxX, y: window.frame.maxY), in: screen.visibleFrame)
+            var frame = window.frame
+            if floatingAppearance.edgeSnap { frame = FloatingGeometry.snapped(frame, in: screen.visibleFrame) }
+            updateAnchor(from: frame, in: screen)
             applyFrame()
-            // Persist the clamped anchor, so the next hover does not jump after an offscreen drag.
-            placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: window.frame.maxX, y: window.frame.maxY), in: screen.visibleFrame)
             savePosition()
         }
         send(.dragging(false))
@@ -367,7 +445,7 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         displayID = screen.focusDockID
         manualSize = PanelSizePreference(window.frame.size)
         if let data = try? JSONEncoder().encode(manualSize) { defaults.set(data, forKey: "expandedSize.\(screen.focusDockID)") }
-        placement = FocusDockCore.WindowPlacement(topRight: NSPoint(x: window.frame.maxX, y: window.frame.maxY), in: screen.visibleFrame)
+        updateAnchor(from: window.frame, in: screen)
         savePosition(); applyFrame()
     }
     private func loadWindowSize(for screen: NSScreen) {
@@ -402,10 +480,15 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         applyFrame()
         defaults.set(screen.focusDockID, forKey: "lastDisplay")
     }
-    private func applyFrame() {
+    private func updateAnchor(from frame: NSRect, in screen: NSScreen) {
+        let size = capsuleWindowSize
+        let point = interaction.isExpanded ? NSPoint(x: expandsLeft ? frame.maxX : frame.minX + size.width, y: expandsDown ? frame.maxY : frame.minY + size.height) : NSPoint(x: frame.maxX, y: frame.maxY)
+        placement = FocusDockCore.WindowPlacement(topRight: point, in: screen.visibleFrame)
+    }
+    private func applyFrame(animated: Bool = false) {
         guard let screen = NSScreen.screens.first(where: { $0.focusDockID == displayID }) ?? NSScreen.main else { return }
         guard let window else { return }
-        let size = interaction.isExpanded ? PanelSizePreference.effective(manual: manualSize, urgency: urgency, visibleSize: screen.visibleFrame.size) : urgency.capsuleSize
+        let size = interaction.isExpanded ? PanelSizePreference.effective(manual: manualSize, urgency: urgency, visibleSize: screen.visibleFrame.size) : capsuleWindowSize
         applyingFrame = true
         if interaction.isExpanded {
             window.styleMask.insert(.resizable)
@@ -415,8 +498,25 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
             window.styleMask.remove(.resizable)
             window.minSize = .zero; window.maxSize = screen.visibleFrame.size
         }
-        materialView?.setExpanded(interaction.isExpanded)
-        window.setFrame(placement.frame(size: size, in: screen.visibleFrame), display: true)
+        let capsule = placement.frame(size: capsuleWindowSize, in: screen.visibleFrame)
+        var target = capsule
+        if interaction.isExpanded {
+            target = FloatingGeometry.expandedFrame(capsule: capsule, size: size, screen: screen.visibleFrame, expandLeft: expandsLeft, expandDown: expandsDown)
+        }
+        window.appearance = interaction.isExpanded ? theme.appearance : floatingAppearance.appAppearance
+        window.hasShadow = interaction.isExpanded || floatingAppearance.shadow == .standard
+        // Keep geometry and the material's native layer mask in the same transaction.
+        // A short AppKit animation interpolates the actual panel frame, not just SwiftUI content.
+        if animated && !NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+            NSAnimationContext.runAnimationGroup { context in
+                context.duration = 0.16
+                window.animator().setFrame(target, display: true)
+            } completionHandler: { [weak self] in Task { @MainActor in
+                guard let self else { return }; self.materialView?.configure(expanded: self.interaction.isExpanded, appearance: self.floatingAppearance)
+            } }
+        } else { window.setFrame(target, display: true) }
+        materialView?.configure(expanded: interaction.isExpanded, appearance: floatingAppearance)
+        window.invalidateShadow()
         applyingFrame = false
     }
     func shutdown() { voiceStartTask?.cancel(); speech.cancel(); savePosition() }
