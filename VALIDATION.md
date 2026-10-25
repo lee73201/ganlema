@@ -1,3 +1,5 @@
+> 后续 0.3.0 阶段的结果、系统权限限制和 GitHub 备份见 [VALIDATION-PHASE2.md](VALIDATION-PHASE2.md)。本文件保留为 0.2 历史记录。
+
 # 干了吗（FocusDock）0.2 验证记录
 
 验证日期：2026-10-25（Asia/Shanghai）。在现有 FocusDock 工程增量修改，没有重建项目。

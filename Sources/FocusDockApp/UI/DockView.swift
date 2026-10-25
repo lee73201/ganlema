@@ -34,6 +34,7 @@ struct DockView: View {
         .preferredColorScheme(controller.theme.colorScheme)
         .tint(DockStyle.accent)
         .onChange(of: composerFocused) { _, value in controller.setComposerFocused(value) }
+        .onChange(of: controller.captureSaved) { _, _ in taskInput = ""; tab = .tasks }
         .onChange(of: repository.items.count) { old, new in if new > old { tab = .tasks } }
         .alert("操作未完成", isPresented: Binding(get: { controller.errorMessage != nil }, set: { if !$0 { controller.errorMessage = nil } })) {
             Button("好", role: .cancel) { controller.errorMessage = nil }
@@ -44,15 +45,15 @@ struct DockView: View {
         HStack(spacing: 9) {
             Image(systemName: "checkmark.circle.fill").font(.system(size: 22, weight: .regular)).foregroundStyle(DockStyle.accent)
             Text("干了吗").font(.system(size: 13, weight: .semibold))
-            Text("\(repository.items.filter { !$0.isCompleted }.count)")
-                .font(.system(size: 11, weight: .medium)).monospacedDigit().foregroundStyle(.secondary)
+            Text(controller.urgency == .normal ? "\(repository.items.filter { !$0.isCompleted }.count)" : "DDL")
+                .font(.system(size: 11, weight: .medium)).monospacedDigit().foregroundStyle(controller.urgency == .normal ? Color.secondary : Color.orange.opacity(0.85))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(DragRegion(controller: controller, onClick: { controller.togglePin() }).frame(maxWidth: .infinity, maxHeight: .infinity))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("干了吗，\(repository.items.filter { !$0.isCompleted }.count) 项待办")
         .accessibilityAddTraits(.isButton).accessibilityAction { controller.togglePin() }
-        .help("悬停展开 · 点击锁定 · 拖动移动")
+        .help(controller.urgency == .normal ? "悬停展开 · 点击锁定 · 拖动移动" : "\(controller.urgency.title) · 悬停查看")
     }
 
     private var expanded: some View {
@@ -62,13 +63,19 @@ struct DockView: View {
                 progress
                 tabs
             }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
-            if let session = controller.editor {
+            if let session = controller.capture {
+                TaskCaptureView(session: session, controller: controller).id(session.id)
+            } else if controller.voicePresented {
+                VoiceCaptureView(controller: controller, speech: controller.speech)
+            } else if let session = controller.editor {
                 TaskEditorView(session: session, controller: controller).id(session.id)
             } else if let habit = controller.editingHabit {
                 HabitEditorView(habit: habit, controller: controller).id(habit.id)
             } else {
                 Group {
-                    if tab == .habits { habitList } else { taskList }
+                    if tab == .habits { habitList }
+                    else if tab == .completed { CompletionListView(repository: repository, habits: habits, controller: controller) }
+                    else { taskList }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transition(.opacity)
@@ -94,11 +101,14 @@ struct DockView: View {
                     .font(.system(size: 12)).foregroundStyle(controller.interaction.isPinned ? DockStyle.accent : .secondary)
                     .frame(width: 24, height: 26)
             }.buttonStyle(.plain).accessibilityLabel(controller.interaction.isPinned ? "取消锁定" : "锁定展开")
+            NotificationControl(reminders: controller.reminders)
             Menu {
                 Picker("外观", selection: $controller.theme) {
                     ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
                 }
                 Divider()
+                Toggle("DDL 临近时增大窗口", isOn: $controller.deadlineGrowthEnabled)
+                Button("启用系统提醒") { Task { await controller.reminders.enable() } }
                 Button("收起窗口", systemImage: "minus") { controller.collapse() }.disabled(controller.hasEditor)
                 Button("移到鼠标所在屏幕") { controller.moveToPointerScreen() }
                 Button("重置当前屏幕位置") { controller.resetPosition() }
@@ -115,7 +125,7 @@ struct DockView: View {
             let summary = TaskDaySummary(items: repository.items, date: context.date)
             VStack(spacing: 7) {
                 HStack {
-                    Text("今日完成").foregroundStyle(.secondary)
+                    Text("今日待办完成").foregroundStyle(.secondary)
                     Spacer()
                     Text("\(summary.completed) / \(summary.total)").foregroundStyle(.secondary)
                     Text("\(summary.percentage)%").foregroundStyle(DockStyle.accent).frame(minWidth: 30, alignment: .trailing)
@@ -209,14 +219,14 @@ struct DockView: View {
             Divider().opacity(0.5)
             HStack(spacing: 9) {
                 Image(systemName: "plus").font(.system(size: 12)).foregroundStyle(.secondary)
-                TextField(tab == .habits ? "添加打卡习惯…" : "添加待办…", text: tab == .habits ? $habitInput : $taskInput)
+                TextField(tab == .habits ? "添加打卡习惯…" : "如：明天下午三点交报告…", text: tab == .habits ? $habitInput : $taskInput)
                     .textFieldStyle(.plain).font(.system(size: 12)).focused($composerFocused)
                     .onSubmit(addFromComposer)
                     .accessibilityLabel(tab == .habits ? "新增习惯名称" : "新增待办标题")
-                Button {} label: { Image(systemName: "mic").font(.system(size: 13)) }
+                Button { composerFocused = false; controller.beginVoiceCapture() } label: { Image(systemName: "mic").font(.system(size: 13)) }
                     .buttonStyle(.plain).frame(width: 24, height: 24)
-                    .disabled(true).help("语音输入将在后续版本提供")
-                    .accessibilityLabel("语音输入，暂未启用")
+                    .help("说出待办，再确认保存")
+                    .accessibilityLabel("语音添加待办")
                 Button(action: addFromComposer) {
                     Image(systemName: "arrow.up.circle.fill").font(.system(size: 20))
                         .foregroundStyle(DockStyle.accent)
@@ -231,9 +241,9 @@ struct DockView: View {
         } else if taskInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             composerFocused = false
             controller.beginEditing()
-        } else if controller.addTask(taskInput) {
-            taskInput = ""
-            tab = .tasks
+        } else {
+            composerFocused = false
+            controller.beginCapture(taskInput)
         }
     }
 

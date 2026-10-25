@@ -1,0 +1,9 @@
+{
+  "version": "0.3.0",
+  "build": 4,
+  "archive": "ganlema-0.3.0-build4-app.zip",
+  "bytes": 572694,
+  "sha256": "e0b7ed65c8d8eb5b7ee88cb02daabf29d0c5d6954c0e2943a59ceee0635f9bfb",
+  "signing": "local ad-hoc; not notarized",
+  "containsUserData": false
+}

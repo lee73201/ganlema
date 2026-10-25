@@ -16,6 +16,12 @@ enum AppTheme: String, CaseIterable {
     }
 }
 
+struct CaptureSession: Identifiable {
+    let id = UUID()
+    let input: String
+    let cards: [ParsedTask]
+}
+
 struct TaskEditorSession: Identifiable {
     let id = UUID()
     let item: TodoItem?
@@ -37,7 +43,16 @@ final class PanelWindowController: NSWindowController, ObservableObject {
     @Published private(set) var interaction = PanelInteraction()
     @Published private(set) var editor: TaskEditorSession?
     @Published private(set) var editingHabit: Habit?
-    var hasEditor: Bool { editor != nil || editingHabit != nil }
+    @Published private(set) var capture: CaptureSession?
+    @Published private(set) var voicePresented = false
+    @Published private(set) var captureSaved = UUID()
+    @Published private(set) var urgency = DeadlineUrgency.normal
+    @Published var deadlineGrowthEnabled: Bool {
+        didSet { defaults.set(deadlineGrowthEnabled, forKey: "deadlineGrowthEnabled"); updateUrgency() }
+    }
+    let speech = NativeSpeechService()
+    let reminders = NativeReminderService()
+    var hasEditor: Bool { editor != nil || editingHabit != nil || capture != nil || voicePresented }
     @Published var errorMessage: String?
     @Published var theme: AppTheme {
         didSet { defaults.set(theme.rawValue, forKey: "theme"); window?.appearance = theme.appearance }
@@ -45,6 +60,7 @@ final class PanelWindowController: NSWindowController, ObservableObject {
 
     private var openTimer: Task<Void, Never>?
     private var closeTimer: Task<Void, Never>?
+    private var voiceStartTask: Task<Void, Never>?
     private var screenObserver: NSObjectProtocol?
     private var menuObservers: [NSObjectProtocol] = []
     private var menuTrackingDepth = 0
@@ -54,14 +70,16 @@ final class PanelWindowController: NSWindowController, ObservableObject {
     private var dragOrigin: NSPoint?
     private var composerFocused = false
     private var materialView: PanelMaterialView<DockView>?
-    private let collapsedSize = NSSize(width: 176, height: 50)
-    private let expandedSize = NSSize(width: 368, height: 506)
+    private var pendingUrgency = DeadlineUrgency.normal
+    private var subscriptions = Set<AnyCancellable>()
+    private var wakeObserver: NSObjectProtocol?
     private let defaults: UserDefaults
 
     init(repository: TaskRepository, habits: HabitRepository, defaults: UserDefaults = .standard) {
         self.repository = repository
         self.habits = habits
         self.defaults = defaults
+        deadlineGrowthEnabled = defaults.object(forKey: "deadlineGrowthEnabled") as? Bool ?? true
         theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "system") ?? .system
         super.init(window: nil)
         let panel = FloatingPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
@@ -113,14 +131,34 @@ final class PanelWindowController: NSWindowController, ObservableObject {
             }
         ]
         restoreForAvailableScreen()
+        repository.$items.sink { [weak self] items in
+            self?.reminders.update(items: items)
+            self?.updateUrgency(items: items)
+        }.store(in: &subscriptions)
+        Timer.publish(every: 30, on: .main, in: .common).autoconnect().sink { [weak self] _ in
+            self?.updateUrgency()
+            if let self { self.reminders.update(items: self.repository.items) }
+        }.store(in: &subscriptions)
+        wakeObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                self?.updateUrgency()
+                if let self { self.reminders.update(items: self.repository.items) }
+            }
+        }
+        reminders.onOpen = { [weak self] id in
+            self?.reveal()
+            if let item = self?.repository.items.first(where: { $0.id == id && !$0.isCompleted }) { self?.beginEditing(item) }
+        }
     }
     required init?(coder: NSCoder) { fatalError("Use init(repository:)") }
 
     deinit {
         openTimer?.cancel()
         closeTimer?.cancel()
+        voiceStartTask?.cancel()
         if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
         menuObservers.forEach { NotificationCenter.default.removeObserver($0) }
+        if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
     }
 
     func showDock() { window?.orderFrontRegardless() }
@@ -156,6 +194,7 @@ final class PanelWindowController: NSWindowController, ObservableObject {
         case .none: break
         }
         if wasExpanded != interaction.isExpanded { applyFrame() }
+        applyPendingUrgency()
     }
 
     private func cancelTimers() { openTimer?.cancel(); closeTimer?.cancel(); openTimer = nil; closeTimer = nil }
@@ -166,7 +205,45 @@ final class PanelWindowController: NSWindowController, ObservableObject {
         syncEditingState()
         window?.makeKeyAndOrderFront(nil)
     }
-    func endEditing() { editor = nil; editingHabit = nil; syncEditingState() }
+    func endEditing() {
+        editor = nil; editingHabit = nil; capture = nil; voicePresented = false
+        voiceStartTask?.cancel(); voiceStartTask = nil
+        speech.cancel()
+        syncEditingState()
+    }
+    func beginCapture(_ input: String) {
+        let cards = LocalTaskParser().parse(input)
+        guard !cards.isEmpty else { return }
+        speech.cancel(); voicePresented = false; editor = nil; editingHabit = nil
+        capture = CaptureSession(input: input, cards: cards)
+        composerFocused = false; syncEditingState(); window?.makeKeyAndOrderFront(nil)
+    }
+    func beginVoiceCapture() {
+        editor = nil; editingHabit = nil; capture = nil; voicePresented = true
+        composerFocused = false; syncEditingState(); window?.makeKeyAndOrderFront(nil)
+        voiceStartTask?.cancel()
+        voiceStartTask = Task { [weak self] in
+            guard let self, self.voicePresented, !Task.isCancelled else { return }
+            do { try await self.speech.start() } catch { /* displayed inline by speech service */ }
+        }
+    }
+    func confirmCapture(_ cards: [ParsedTask]) {
+        do {
+            try repository.addBatch(cards.map(\.draft))
+            let wantsReminders = cards.contains { ($0.draft.dueDate.map { $0 > Date() } ?? false) && !$0.draft.reminderOffsets.isEmpty }
+            endEditing(); captureSaved = UUID()
+            if wantsReminders { Task { [weak self] in await self?.reminders.enable() } }
+        } catch { errorMessage = error.localizedDescription }
+    }
+    private func updateUrgency(items: [TodoItem]? = nil) {
+        pendingUrgency = deadlineGrowthEnabled ? DeadlineUrgency.evaluate(dueDates: (items ?? repository.items).filter { !$0.isCompleted }.compactMap(\.dueDate)) : .normal
+        applyPendingUrgency()
+    }
+    private func applyPendingUrgency() {
+        guard urgency != pendingUrgency, !interaction.isEditing, !interaction.isDragging, !interaction.isMenuTracking else { return }
+        urgency = pendingUrgency
+        applyFrame()
+    }
     func setComposerFocused(_ focused: Bool) { composerFocused = focused; syncEditingState() }
     private func syncEditingState() { send(.editing(hasEditor || composerFocused)) }
     func beginEditingHabit(_ habit: Habit) {
@@ -189,11 +266,13 @@ final class PanelWindowController: NSWindowController, ObservableObject {
         catch { errorMessage = error.localizedDescription; return false }
     }
     func toggleHabit(_ habit: Habit, date: Date) { perform { try habits.toggle(habit, on: date) } }
+    func removeCheckIn(_ record: HabitCheckIn) { perform { try habits.removeCheckIn(record) } }
     func deleteHabit(_ habit: Habit) { perform { try habits.delete(habit) } }
     func save(_ draft: TaskDraft, item: TodoItem?) {
         do {
             if let item { try repository.update(item, with: draft) } else { try repository.add(draft) }
             endEditing()
+            if let due = draft.dueDate, due > .now, !draft.reminderOffsets.isEmpty { Task { [weak self] in await self?.reminders.enable() } }
         } catch { errorMessage = error.localizedDescription }
     }
     func toggle(_ item: TodoItem) { perform { try repository.toggleCompletion(item) } }
@@ -247,10 +326,11 @@ final class PanelWindowController: NSWindowController, ObservableObject {
     }
     private func applyFrame() {
         guard let screen = NSScreen.screens.first(where: { $0.focusDockID == displayID }) ?? NSScreen.main else { return }
-        let size = interaction.isExpanded ? expandedSize : collapsedSize
+        let size = interaction.isExpanded ? urgency.panelSize : urgency.capsuleSize
         materialView?.setExpanded(interaction.isExpanded)
         window?.setFrame(placement.frame(size: size, in: screen.visibleFrame), display: true)
     }
+    func shutdown() { voiceStartTask?.cancel(); speech.cancel(); savePosition() }
     func savePosition() {
         guard let displayID, let data = try? JSONEncoder().encode(placement) else { return }
         defaults.set(data, forKey: "placement.\(displayID)")

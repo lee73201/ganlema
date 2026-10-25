@@ -21,6 +21,15 @@ public final class TodoItem {
     public var completedAt: Date?
     // Optional additive field: existing stores migrate without inventing a category.
     public var category: String? = nil
+    public var reminderOffsetsJSON: String? = nil
+
+    public var reminderOffsets: [TimeInterval] {
+        get {
+            guard let raw = reminderOffsetsJSON?.data(using: .utf8), let values = try? JSONDecoder().decode([Double].self, from: raw) else { return ReminderPlan.defaultOffsets }
+            return ReminderPlan.normalized(values)
+        }
+        set { reminderOffsetsJSON = (try? JSONEncoder().encode(ReminderPlan.normalized(newValue))).flatMap { String(data: $0, encoding: .utf8) } }
+    }
 
     public var priority: TaskPriority {
         get { TaskPriority(rawValue: priorityRawValue) ?? .normal }
@@ -46,8 +55,10 @@ public struct TaskDraft {
     public var dueDate: Date?
     public var priority: TaskPriority
     public var category: String?
+    public var reminderOffsets: [TimeInterval]
 
-    public init(title: String = "", notes: String = "", dueDate: Date? = nil, priority: TaskPriority = .normal, category: String? = nil) {
+    public init(title: String = "", notes: String = "", dueDate: Date? = nil, priority: TaskPriority = .normal, category: String? = nil, reminderOffsets: [TimeInterval] = ReminderPlan.defaultOffsets) {
+        self.reminderOffsets = ReminderPlan.normalized(reminderOffsets)
         self.title = title
         self.notes = notes
         self.dueDate = dueDate
@@ -56,6 +67,6 @@ public struct TaskDraft {
     }
 
     public init(item: TodoItem) {
-        self.init(title: item.title, notes: item.notes, dueDate: item.dueDate, priority: item.priority, category: item.category)
+        self.init(title: item.title, notes: item.notes, dueDate: item.dueDate, priority: item.priority, category: item.category, reminderOffsets: item.reminderOffsets)
     }
 }

@@ -37,11 +37,20 @@ public final class TaskRepository: ObservableObject {
 
     @discardableResult
     public func add(_ draft: TaskDraft) throws -> TodoItem {
-        let title = try validatedTitle(draft.title)
-        let item = TodoItem(title: title, notes: draft.notes, dueDate: draft.dueDate, priority: draft.priority, category: normalizedCategory(draft.category))
-        context.insert(item)
+        try addBatch([draft])[0]
+    }
+
+    /// Validate every card first, then commit the whole confirmation in one transaction.
+    @discardableResult public func addBatch(_ drafts: [TaskDraft]) throws -> [TodoItem] {
+        let titles = try drafts.map { try validatedTitle($0.title) }
+        let items = zip(drafts, titles).map { draft, title in
+            let item = TodoItem(title: title, notes: draft.notes, dueDate: draft.dueDate, priority: draft.priority, category: normalizedCategory(draft.category))
+            item.reminderOffsets = draft.reminderOffsets
+            return item
+        }
+        items.forEach(context.insert)
         try commit()
-        return item
+        return items
     }
 
     public func update(_ item: TodoItem, with draft: TaskDraft) throws {
@@ -51,6 +60,7 @@ public final class TaskRepository: ObservableObject {
         item.dueDate = draft.dueDate
         item.priority = draft.priority
         item.category = normalizedCategory(draft.category)
+        item.reminderOffsets = draft.reminderOffsets
         try commit()
     }
 

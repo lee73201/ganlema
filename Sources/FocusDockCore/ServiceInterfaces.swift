@@ -1,9 +1,10 @@
 import Foundation
 
-// Phase two contracts only. No microphone, network, or notification permissions are requested.
-public protocol SpeechService {
-    func transcribe() async throws -> String
-    func stop() async
+// Native services request permissions only in response to user actions.
+@MainActor public protocol SpeechService: AnyObject {
+    func start() async throws
+    func finish()
+    func cancel()
 }
 
 public struct TaskSuggestion: Sendable {
@@ -16,7 +17,8 @@ public protocol AIService {
     func suggestions(for taskTitle: String, dueDate: Date?) async throws -> [TaskSuggestion]
 }
 
-public protocol ReminderService {
-    func schedule(taskID: UUID, title: String, dueDate: Date) async throws
-    func cancel(taskID: UUID) async
+@MainActor public protocol ReminderService: AnyObject {
+    func refreshAuthorization() async
+    func enable() async
+    func update(items: [TodoItem])
 }

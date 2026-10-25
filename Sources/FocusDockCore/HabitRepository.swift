@@ -59,6 +59,11 @@ public final class HabitRepository: ObservableObject {
         }
         try commit()
     }
+    public func removeCheckIn(_ record: HabitCheckIn) throws {
+        guard let current = checkIns.first(where: { $0.key == record.key }) else { return }
+        context.delete(current)
+        try commit()
+    }
     public func streak(for habit: Habit, asOf date: Date = .now, calendar: Calendar = .autoupdatingCurrent) -> Int {
         let keys = Set(checkIns.filter { $0.habitID == habit.id }.map(\.dayKey))
         return HabitCalendar.streak(dayKeys: keys, asOf: date, calendar: calendar)

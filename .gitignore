@@ -5,3 +5,12 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 .DS_Store
+*.store
+*.store-*
+*.sqlite
+*.sqlite-*
+.env
+.env.*
+*.p12
+*.key
+__pycache__/

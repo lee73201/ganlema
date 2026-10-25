@@ -58,6 +58,7 @@ struct TaskEditorView: View {
                                     .font(.system(size: 10)).foregroundStyle(.orange)
                             }
                         }
+                        if hasDeadline { ReminderOptionsView(offsets: $draft.reminderOffsets) }
                     }
                 }
                 .padding(.vertical, 2)

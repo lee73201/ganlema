@@ -33,6 +33,12 @@ public enum HabitCalendar {
         let parts = calendar(source).dateComponents([.year, .month, .day], from: date)
         return String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
     }
+    public static func date(for key: String, calendar source: Calendar = .autoupdatingCurrent) -> Date? {
+        let parts = key.split(separator: "-").compactMap { Int($0) }
+        guard parts.count == 3, let date = calendar(source).date(from: DateComponents(year: parts[0], month: parts[1], day: parts[2])),
+              self.key(for: date, calendar: source) == key else { return nil }
+        return date
+    }
     public static func week(containing date: Date, calendar source: Calendar = .autoupdatingCurrent) -> [Date] {
         let calendar = calendar(source)
         let offset = (calendar.component(.weekday, from: date) + 5) % 7

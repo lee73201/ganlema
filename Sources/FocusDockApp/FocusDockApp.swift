@@ -113,5 +113,5 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         return false
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
-    func applicationWillTerminate(_ notification: Notification) { dock?.savePosition() }
+    func applicationWillTerminate(_ notification: Notification) { dock?.shutdown() }
 }
