@@ -108,9 +108,15 @@ struct DockView: View {
             .help("拖动以移动悬浮窗")
             Button { controller.togglePin() } label: {
                 Image(systemName: controller.interaction.isPinned ? "pin.fill" : "pin")
-                    .font(.system(size: 12)).foregroundStyle(controller.interaction.isPinned ? DockStyle.accent : .secondary)
-                    .frame(width: 24, height: 26)
-            }.buttonStyle(.plain).accessibilityLabel(controller.interaction.isPinned ? "取消锁定" : "锁定展开")
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(controller.interaction.isPinned ? DockStyle.accent : .secondary)
+                    .frame(width: 28, height: 28)
+                    .background(controller.interaction.isPinned ? DockStyle.accent.opacity(0.16) : Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 7))
+                    .contentShape(Rectangle())
+            }.buttonStyle(.plain)
+                .accessibilityLabel(controller.interaction.isPinned ? "取消锁定" : "锁定展开")
+                .accessibilityValue(controller.interaction.isPinned ? "已固定" : "未固定")
+                .help(controller.interaction.isPinned ? "已固定：点击解锁，移开鼠标后自动收起" : "点击固定：移开鼠标仍保持展开")
             NotificationControl(reminders: controller.reminders)
             Menu {
                 Button("悬浮外观设置…") { controller.openAppearanceSettings() }

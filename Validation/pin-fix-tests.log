@@ -1,0 +1,115 @@
+Building for debugging...
+[2 / 20]
+[3 / 21] FocusDockCore
+[5 / 22] FocusDockCore
+[8 / 11] FocusDock-product
+[10 / 13] FocusDock-product
+[11 / 13] FocusDock-product
+[13 / 15] FocusDock-product
+Build complete! (3.47秒)
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test previousVersionStoreAddsDefaultRemindersWithoutLosingFields() started.
+◇ Test pausingAnExpiredFocusDoesNotFreezeAnUnfinishedZeroTimer() started.
+◇ Test todaySummaryExcludesFutureTasksAndHasSafeEmptyProgress() started.
+◇ Test multipleTasksKeepDatesAndExplicitReminderRequirements() started.
+◇ Test hoverMustStillBeInsideWhenDelayEnds() started.
+◇ Test swiftDataCRUDSurvivesReopeningTheStore() started.
+◇ Test presetsScalesAndRadiiStayBounded() started.
+◇ Test calendarWeekAbsoluteDateAndRelativeDurationAreCorrect() started.
+◇ Test habitCompletionProjectionTracksDatesUndoAndReopening() started.
+◇ Test urgencyHasBoundedMonotonicGrowthAndNoTaskCountDependency() started.
+◇ Test userPanelSizeClampsToUsableMinimumAndScreen() started.
+◇ Test categoriesPersistAndNormalizeWithoutChangingTaskIdentity() started.
+◇ Test changingPresetKeepsNearestVisibleEdgesWithoutJumping() started.
+◇ Test placementHandlesNegativeDisplayOriginsAndResolutionChanges() started.
+◇ Test originalTaskStoreMigratesWithoutDataLoss() started.
+◇ Test collapsedDragDoesNotExpandMidGesture() started.
+◇ Test habitNamesRejectBlankEditsWithoutLosingHistory() started.
+◇ Test resizingStaysInsideNegativeOriginDisplayAndPreservesUsableFrame() started.
+◇ Test reminderQueueCancelsCompletedRequestsAndOnlyReschedulesChangedDates() started.
+◇ Test expansionDirectionCanRemainStableWhileResizingOrDragging() started.
+◇ Test ambiguousMissingAndInvalidTimesRequireConfirmation() started.
+◇ Test streakUsesHistoryGapsAndNeverCountsFuture() started.
+◇ Test placementClampsAllEdgesAndSmallScreens() started.
+◇ Test savedManualSizeTakesPriorityAndDefaultsKeepDeadlineGrowth() started.
+◇ Test checkInsAreIndependentByHabitAndCivilDay() started.
+◇ Test focusWallClockPauseResumeAndReopeningAreAccurate() started.
+◇ Test reentryCancelsCollapseAndPinSurvivesLeaving() started.
+◇ Test remindersAreFutureOnlyDeduplicatedAndStableAcrossEdits() started.
+◇ Test habitCRUDAndHistorySurviveReopening() started.
+◇ Test unpunctuatedSpeechCanStillProduceTwoDatedTasks() started.
+◇ Test emptyFinalSpeechResultDoesNotEraseRecognizedWords() started.
+◇ Test editingAndDraggingPreventUnexpectedCollapse() started.
+◇ Test roundedTransparentCornersAreExcludedButCenterAndEdgesAreInteractive() started.
+◇ Test confirmedBatchIsAtomicAndReminderChoicesPersist() started.
+◇ Test appearanceSettingsRoundTripAndNeverTouchTaskOrWindowPreferences() started.
+◇ Test speechFailureAndTimeoutKeepUsablePartialText() started.
+◇ Test mondayWeeksSurviveYearBoundaryAndDST() started.
+◇ Test multipleTaskClockCanInheritThePreviousExplicitDay() started.
+◇ Test edgeSnapRespectsThresholdAndClampsSmallDisplays() started.
+◇ Test noSpeechIsNeverReportedAsSuccessfulCapture() started.
+◇ Test quickEditsPreserveOtherTaskFieldsAndSurviveRestart() started.
+◇ Test firstUpgradeRetainsClassicCapsuleAndDelays() started.
+◇ Test draggingAcrossScreenKeepsCollapseReopenAnchorStable() started.
+◇ Test autoExpansionUsesAvailableSideAndNeverLeavesNegativeOriginScreen() started.
+◇ Test naturalLanguageExtractsChineseTimeAndTask() started.
+◇ Test ordinaryTaskWordsAreNotMistakenForTimeExpressions() started.
+◇ Test correctedSpeechResultsReplacePartialWordsWithoutConcatenatingDuplicates() started.
+◇ Test openMenuPreventsCollapseAndResumesWhenDismissed() started.
+◇ Test manualCollapseWaitsForPointerExitBeforeHoverReopens() started.
+◇ Test menuRevealPinsAndEscapeCollapses() started.
+◇ Test repositoryRejectsBlankTitlesAndSortsActionableTasks() started.
+✔ Test pausingAnExpiredFocusDoesNotFreezeAnUnfinishedZeroTimer() passed after 0.003 seconds.
+✔ Test presetsScalesAndRadiiStayBounded() passed after 0.003 seconds.
+✔ Test collapsedDragDoesNotExpandMidGesture() passed after 0.003 seconds.
+✔ Test userPanelSizeClampsToUsableMinimumAndScreen() passed after 0.003 seconds.
+✔ Test resizingStaysInsideNegativeOriginDisplayAndPreservesUsableFrame() passed after 0.003 seconds.
+✔ Test hoverMustStillBeInsideWhenDelayEnds() passed after 0.003 seconds.
+✔ Test expansionDirectionCanRemainStableWhileResizingOrDragging() passed after 0.003 seconds.
+✔ Test changingPresetKeepsNearestVisibleEdgesWithoutJumping() passed after 0.003 seconds.
+✔ Test placementClampsAllEdgesAndSmallScreens() passed after 0.003 seconds.
+✔ Test reentryCancelsCollapseAndPinSurvivesLeaving() passed after 0.003 seconds.
+✔ Test placementHandlesNegativeDisplayOriginsAndResolutionChanges() passed after 0.003 seconds.
+✔ Test savedManualSizeTakesPriorityAndDefaultsKeepDeadlineGrowth() passed after 0.003 seconds.
+✔ Test emptyFinalSpeechResultDoesNotEraseRecognizedWords() passed after 0.003 seconds.
+✔ Test focusWallClockPauseResumeAndReopeningAreAccurate() passed after 0.003 seconds.
+✔ Test editingAndDraggingPreventUnexpectedCollapse() passed after 0.003 seconds.
+✔ Test roundedTransparentCornersAreExcludedButCenterAndEdgesAreInteractive() passed after 0.003 seconds.
+✔ Test speechFailureAndTimeoutKeepUsablePartialText() passed after 0.003 seconds.
+✔ Test urgencyHasBoundedMonotonicGrowthAndNoTaskCountDependency() passed after 0.003 seconds.
+✔ Test noSpeechIsNeverReportedAsSuccessfulCapture() passed after 0.003 seconds.
+✔ Test streakUsesHistoryGapsAndNeverCountsFuture() passed after 0.003 seconds.
+✔ Test remindersAreFutureOnlyDeduplicatedAndStableAcrossEdits() passed after 0.003 seconds.
+✔ Test edgeSnapRespectsThresholdAndClampsSmallDisplays() passed after 0.003 seconds.
+✔ Test reminderQueueCancelsCompletedRequestsAndOnlyReschedulesChangedDates() passed after 0.003 seconds.
+✔ Test autoExpansionUsesAvailableSideAndNeverLeavesNegativeOriginScreen() passed after 0.003 seconds.
+✔ Test draggingAcrossScreenKeepsCollapseReopenAnchorStable() passed after 0.003 seconds.
+✔ Test mondayWeeksSurviveYearBoundaryAndDST() passed after 0.003 seconds.
+✔ Test correctedSpeechResultsReplacePartialWordsWithoutConcatenatingDuplicates() passed after 0.003 seconds.
+✔ Test openMenuPreventsCollapseAndResumesWhenDismissed() passed after 0.003 seconds.
+✔ Test manualCollapseWaitsForPointerExitBeforeHoverReopens() passed after 0.003 seconds.
+✔ Test menuRevealPinsAndEscapeCollapses() passed after 0.003 seconds.
+✔ Test firstUpgradeRetainsClassicCapsuleAndDelays() passed after 0.003 seconds.
+✔ Test ordinaryTaskWordsAreNotMistakenForTimeExpressions() passed after 0.004 seconds.
+✔ Test unpunctuatedSpeechCanStillProduceTwoDatedTasks() passed after 0.004 seconds.
+✔ Test naturalLanguageExtractsChineseTimeAndTask() passed after 0.004 seconds.
+✔ Test multipleTasksKeepDatesAndExplicitReminderRequirements() passed after 0.004 seconds.
+✔ Test multipleTaskClockCanInheritThePreviousExplicitDay() passed after 0.004 seconds.
+✔ Test appearanceSettingsRoundTripAndNeverTouchTaskOrWindowPreferences() passed after 0.005 seconds.
+✔ Test ambiguousMissingAndInvalidTimesRequireConfirmation() passed after 0.006 seconds.
+✔ Test calendarWeekAbsoluteDateAndRelativeDurationAreCorrect() passed after 0.006 seconds.
+✔ Test previousVersionStoreAddsDefaultRemindersWithoutLosingFields() passed after 0.148 seconds.
+✔ Test habitCompletionProjectionTracksDatesUndoAndReopening() passed after 0.157 seconds.
+✔ Test swiftDataCRUDSurvivesReopeningTheStore() passed after 0.168 seconds.
+✔ Test categoriesPersistAndNormalizeWithoutChangingTaskIdentity() passed after 0.174 seconds.
+✔ Test todaySummaryExcludesFutureTasksAndHasSafeEmptyProgress() passed after 0.175 seconds.
+✔ Test originalTaskStoreMigratesWithoutDataLoss() passed after 0.186 seconds.
+✔ Test habitNamesRejectBlankEditsWithoutLosingHistory() passed after 0.188 seconds.
+✔ Test checkInsAreIndependentByHabitAndCivilDay() passed after 0.190 seconds.
+✔ Test habitCRUDAndHistorySurviveReopening() passed after 0.204 seconds.
+✔ Test confirmedBatchIsAtomicAndReminderChoicesPersist() passed after 0.210 seconds.
+✔ Test quickEditsPreserveOtherTaskFieldsAndSurviveRestart() passed after 0.217 seconds.
+✔ Test repositoryRejectsBlankTitlesAndSortsActionableTasks() passed after 0.219 seconds.
+✔ Test run with 51 tests in 0 suites passed after 0.220 seconds.

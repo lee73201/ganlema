@@ -1,6 +1,8 @@
-# 干了吗（FocusDock）0.5.1
+# 干了吗（FocusDock）0.5.2
 
 原生 macOS 悬浮待办与打卡工具：SwiftUI + AppKit NSPanel + SwiftData，macOS 14 起。本机数据，无账号。应用名称是「干了吗」，工程名与 Bundle ID 沿用 FocusDock。
+
+> 0.5.2扩大图钉按钮的完整点击区域，并增加明确的固定状态底色。验证见 `VALIDATION-PIN-FIX.md`。
 
 ## 打开、收起与退出
 
