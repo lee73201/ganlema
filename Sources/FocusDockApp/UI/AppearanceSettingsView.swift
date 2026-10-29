@@ -35,7 +35,7 @@ struct AppearanceSettingsView: View {
                     VStack(spacing: 9) {
                         let value = controller.floatingAppearance
                         let size = value.size(urgency: controller.urgency)
-                        CapsuleAppearanceView(appearance: value, count: controller.repository.items.filter { !$0.isCompleted }.count, deadline: controller.nearestDeadlineTitle, urgent: controller.urgency != .normal)
+                        LiveCapsuleView(controller: controller, repository: controller.repository, timer: controller.focusTimer)
                             .frame(width: size.width, height: size.height)
                             .background(PreviewGlass(appearance: value).overlay(value.shape == .island ? Color.black.opacity(0.7 + value.opacity * 0.2) : .clear)).clipShape(RoundedRectangle(cornerRadius: value.radius(in: size)))
                             .shadow(color: .black.opacity(value.shadow == .off ? 0 : value.shadow == .subtle ? 0.08 : 0.22), radius: value.shadow == .subtle ? 3 : 8, y: 3)

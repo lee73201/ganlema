@@ -75,6 +75,17 @@ public final class TaskRepository: ObservableObject {
         try commit()
     }
 
+    public func restore(_ snapshot: DeletedTaskSnapshot) throws {
+        guard !items.contains(where: { $0.id == snapshot.id }) else { throw DeletionRestoreError.alreadyExists }
+        let draft = snapshot.draft
+        let item = TodoItem(title: draft.title, notes: draft.notes, dueDate: draft.dueDate, priority: draft.priority, category: draft.category)
+        item.priorityRawValue = snapshot.priorityRawValue
+        item.id = snapshot.id; item.createdAt = snapshot.createdAt
+        item.isCompleted = snapshot.isCompleted; item.completedAt = snapshot.completedAt
+        item.reminderOffsetsJSON = snapshot.reminderJSON
+        context.insert(item); try commit()
+    }
+
     private func validatedTitle(_ value: String) throws -> String {
         let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { throw TaskRepositoryError.emptyTitle }

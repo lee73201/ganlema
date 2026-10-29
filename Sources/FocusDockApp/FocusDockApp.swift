@@ -73,6 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     private func makeDockMenu() -> NSMenu {
         let menu = NSMenu(title: "干了吗")
         menu.addItem(menuItem("打开干了吗", action: #selector(reveal), key: ""))
+        menu.addItem(menuItem("撤销上次删除", action: #selector(undoDeletion), key: ""))
         menu.addItem(menuItem("移到鼠标所在屏幕", action: #selector(moveToCurrentScreen), key: ""))
         let sizingMenu = NSMenu(title: "窗口大小")
         sizingMenu.addItem(menuItem("放大窗口", action: #selector(enlargeWindow), key: "="))
@@ -104,12 +105,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         return item
     }
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(undoDeletion) { return dock?.deletionUndo.latest.map { $0.expires > Date() } ?? false }
         if menuItem.action == #selector(changeTheme(_:)), let raw = menuItem.representedObject as? String {
             menuItem.state = dock?.theme.rawValue == raw ? .on : .off
         }
         return true
     }
     @objc private func appearanceSettings() { dock?.openAppearanceSettings() }
+    @objc private func undoDeletion() { dock?.undoDeletion() }
     @objc private func reveal() { dock?.reveal() }
     @objc private func moveToCurrentScreen() { dock?.moveToPointerScreen() }
     @objc private func enlargeWindow() { dock?.scaleWindow(1.15) }

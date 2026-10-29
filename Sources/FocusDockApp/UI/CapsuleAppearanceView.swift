@@ -65,3 +65,34 @@ struct FocusTimerBar: View {
         }
     }
 }
+
+/// Observing the timer here keeps the collapsed entry live without changing its frame.
+struct LiveCapsuleView: View {
+    @ObservedObject var controller: PanelWindowController
+    @ObservedObject var repository: TaskRepository
+    @ObservedObject var timer: FocusTimer
+    @Environment(\.colorScheme) private var systemScheme
+    var body: some View {
+        let appearance = controller.floatingAppearance
+        if let session = timer.session {
+            let compact = appearance.shape == .circle || appearance.shape == .strip
+            HStack(spacing: compact ? 3 : 7) {
+                if appearance.shape != .circle {
+                    Image(systemName: timer.finished ? "checkmark.circle" : session.pausedRemaining == nil ? "timer" : "pause.fill")
+                        .foregroundStyle(appearance.accentColor).font(.system(size: compact ? 9 : 14))
+                }
+                VStack(spacing: 1) {
+                    if !compact { Text(timer.finished ? "专注完成" : session.pausedRemaining == nil ? "正在专注" : "专注已暂停").font(.system(size: 9)).foregroundStyle(.secondary) }
+                    Text(FocusCountdown.text(session: session, now: timer.now))
+                        .font(.system(size: compact ? 11 : 15, weight: .medium, design: .monospaced)).lineLimit(1).minimumScaleFactor(0.8)
+                }
+            }.frame(maxWidth: .infinity, maxHeight: .infinity)
+                .foregroundStyle(appearance.shape == .island ? Color.white : Color.primary)
+                .environment(\.colorScheme, appearance.shape == .island ? .dark : appearance.scheme ?? systemScheme)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel("\(timer.finished ? "专注完成" : session.pausedRemaining == nil ? "正在专注" : "专注已暂停")，剩余 \(FocusCountdown.text(session: session, now: timer.now))")
+        } else {
+            CapsuleAppearanceView(appearance: appearance, count: repository.items.filter { !$0.isCompleted }.count, deadline: controller.nearestDeadlineTitle, urgent: controller.urgency != .normal)
+        }
+    }
+}

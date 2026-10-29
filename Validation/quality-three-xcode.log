@@ -1,0 +1,530 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild -project FocusDock.xcodeproj -scheme FocusDock -configuration Debug -destination platform=macOS,arch=arm64 -derivedDataPath ../../work-xcode/XcodeBuild test
+
+ComputePackagePrebuildTargetDependencyGraph
+
+Prepare packages
+
+CreateBuildRequest
+
+SendProjectDescription
+
+CreateBuildOperation
+
+ComputeTargetDependencyGraph
+note: Building targets in dependency order
+note: Target dependency graph (3 targets)
+    Target 'FocusDockCoreTests' in project 'FocusDock'
+        ➜ Explicit dependency on target 'FocusDockCore' in project 'FocusDock'
+    Target 'FocusDock' in project 'FocusDock'
+        ➜ Explicit dependency on target 'FocusDockCore' in project 'FocusDock'
+    Target 'FocusDockCore' in project 'FocusDock' (no dependencies)
+
+GatherProvisioningInputs
+
+CreateBuildDescription
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc --version
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -v -E -dM -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -x c -c /dev/null
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld -version_details
+
+ExecuteExternalTool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/libtool -V
+
+Build description signature: 1647c17a8796003cf1088702fee308d5
+Build description path: /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/XCBuildData/1647c17a8796003cf1088702fee308d5.xcbuilddata
+ClangStatCache /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/FocusDock.xcodeproj
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang-stat-cache /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache
+
+ProcessInfoPlistFile /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCore.framework/Versions/A/Resources/Info.plist /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDockCore.build/empty-FocusDockCore.plist (in target 'FocusDockCore' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-infoPlistUtility /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDockCore.build/empty-FocusDockCore.plist -producttype com.apple.product-type.framework -expandbuildsettings -platform macosx -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCore.framework/Versions/A/Resources/Info.plist
+
+SwiftDriver FocusDock normal arm64 com.apple.xcode.tools.swift.compiler (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name FocusDock -Onone @/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Index.noindex/DataStore -swift-version 5 -I /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -sdk-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-generated-files.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-own-target-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock-da937fbdf29a65fb12f76109c7dfcdf2-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-project-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/include -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources-normal/arm64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources/arm64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-Swift.h -working-directory /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock -experimental-emit-module-separately -disable-cmo
+
+SwiftDriver FocusDock normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftDriver -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name FocusDock -Onone @/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target x86_64-apple-macos14.0 -g -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Index.noindex/DataStore -swift-version 5 -I /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -sdk-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-generated-files.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-own-target-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock-da937fbdf29a65fb12f76109c7dfcdf2-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-project-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/include -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources-normal/x86_64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources/x86_64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-Swift.h -working-directory /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock -experimental-emit-module-separately -disable-cmo
+
+ProcessInfoPlistFile /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/Info.plist /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDockCoreTests.build/empty-FocusDockCoreTests.plist (in target 'FocusDockCoreTests' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-infoPlistUtility /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDockCoreTests.build/empty-FocusDockCoreTests.plist -producttype com.apple.product-type.bundle.unit-test -expandbuildsettings -platform macosx -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/Info.plist
+
+ProcessInfoPlistFile /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Info.plist /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Resources/Info.plist (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-infoPlistUtility /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Resources/Info.plist -producttype com.apple.product-type.application -genpkginfo /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/PkgInfo -expandbuildsettings -platform macosx -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Info.plist
+
+CopySwiftLibs /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest (in target 'FocusDockCoreTests' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-swiftStdLibTool --copy --verbose --scan-executable /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/MacOS/FocusDockCoreTests --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/Frameworks --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/PlugIns --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/Library/SystemExtensions --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/Extensions --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCore.framework --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCoreTests.xctest/Contents/Frameworks --strip-bitcode --scan-executable /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libXCTestSwiftSupport.dylib --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDockCoreTests.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+Ignoring --strip-bitcode because --sign was not passed
+
+SwiftEmitModule normal x86_64 Emitting\ module\ for\ FocusDock (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    
+
+SwiftCompile normal x86_64 Compiling\ DockView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DockView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DockView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile DockView.swift
+
+SwiftCompile normal x86_64 Compiling\ NativeReminderService.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Services/NativeReminderService.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Services/NativeReminderService.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile NativeReminderService.swift
+
+SwiftEmitModule normal arm64 Emitting\ module\ for\ FocusDock (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    
+
+SwiftCompile normal arm64 Compiling\ NativeReminderService.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Services/NativeReminderService.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Services/NativeReminderService.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile NativeReminderService.swift
+
+SwiftCompile normal arm64 Compiling\ DockView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DockView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DockView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile DockView.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling NativeReminderService.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 Compiling\ HabitRowView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/HabitRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/HabitRowView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile HabitRowView.swift
+
+SwiftCompile normal arm64 Compiling\ FocusDockApp.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/FocusDockApp.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/FocusDockApp.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile FocusDockApp.swift
+
+SwiftCompile normal arm64 Compiling\ CapsuleAppearanceView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CapsuleAppearanceView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CapsuleAppearanceView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile CapsuleAppearanceView.swift
+
+SwiftCompile normal arm64 Compiling\ CompletionListView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CompletionListView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CompletionListView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile CompletionListView.swift
+
+SwiftCompile normal arm64 Compiling\ PanelWindowController.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Window/PanelWindowController.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Window/PanelWindowController.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile PanelWindowController.swift
+
+SwiftCompile normal arm64 Compiling\ TaskCaptureView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskCaptureView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskCaptureView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile TaskCaptureView.swift
+
+SwiftDriverJobDiscovery normal x86_64 Compiling NativeReminderService.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ TaskCaptureView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskCaptureView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskCaptureView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile TaskCaptureView.swift
+
+SwiftCompile normal x86_64 Compiling\ FocusDockApp.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/FocusDockApp.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/FocusDockApp.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile FocusDockApp.swift
+
+SwiftDriverJobDiscovery normal arm64 Emitting module for FocusDock (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriver\ Compilation\ Requirements FocusDock normal arm64 com.apple.xcode.tools.swift.compiler (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name FocusDock -Onone @/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Index.noindex/DataStore -swift-version 5 -I /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -sdk-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-generated-files.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-own-target-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock-da937fbdf29a65fb12f76109c7dfcdf2-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-project-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/include -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources-normal/arm64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources/arm64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-Swift.h -working-directory /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal arm64 Compiling FocusDockApp.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ CapsuleAppearanceView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CapsuleAppearanceView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CapsuleAppearanceView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile CapsuleAppearanceView.swift
+
+Copy /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftsourceinfo (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftsourceinfo /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/Project/arm64-apple-macos.swiftsourceinfo
+
+SwiftDriverJobDiscovery normal arm64 Compiling HabitRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ CompletionListView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CompletionListView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/CompletionListView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile CompletionListView.swift
+
+SwiftDriverJobDiscovery normal x86_64 Emitting module for FocusDock (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriver\ Compilation\ Requirements FocusDock normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-Swift-Compilation-Requirements -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name FocusDock -Onone @/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target x86_64-apple-macos14.0 -g -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Index.noindex/DataStore -swift-version 5 -I /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -sdk-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-generated-files.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-own-target-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock-da937fbdf29a65fb12f76109c7dfcdf2-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-project-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/include -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources-normal/x86_64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources/x86_64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-Swift.h -working-directory /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock -experimental-emit-module-separately -disable-cmo
+
+SwiftDriverJobDiscovery normal x86_64 Compiling FocusDockApp.swift (in target 'FocusDock' from project 'FocusDock')
+
+Copy /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/arm64-apple-macos.swiftmodule /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftmodule (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftmodule /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/arm64-apple-macos.swiftmodule
+
+Copy /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/x86_64-apple-macos.swiftmodule /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftmodule (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftmodule /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/x86_64-apple-macos.swiftmodule
+
+Copy /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/x86_64-apple-macos.abi.json /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.abi.json (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.abi.json /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/x86_64-apple-macos.abi.json
+
+Copy /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/arm64-apple-macos.abi.json /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.abi.json (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.abi.json /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/arm64-apple-macos.abi.json
+
+Copy /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftsourceinfo (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-copy -exclude .DS_Store -exclude CVS -exclude .svn -exclude .git -exclude .hg -strip-unsigned-binaries -strip-deterministic -strip-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip -resolve-src-symlinks -rename /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftsourceinfo /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDock.swiftmodule/Project/x86_64-apple-macos.swiftsourceinfo
+
+SwiftCompile normal x86_64 Compiling\ AppearanceSettingsView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/AppearanceSettingsView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/AppearanceSettingsView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile AppearanceSettingsView.swift
+
+SwiftCompile normal x86_64 Compiling\ TaskRowView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskRowView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile TaskRowView.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling CompletionListView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ DeletionUndoBar.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DeletionUndoBar.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DeletionUndoBar.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile DeletionUndoBar.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling CapsuleAppearanceView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ HabitRowView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/HabitRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/HabitRowView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile HabitRowView.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling TaskCaptureView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ PanelWindowController.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Window/PanelWindowController.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/Window/PanelWindowController.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile PanelWindowController.swift
+
+SwiftDriverJobDiscovery normal x86_64 Compiling TaskCaptureView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 Compiling\ TaskRowView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskRowView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile TaskRowView.swift
+
+SwiftDriverJobDiscovery normal x86_64 Compiling DeletionUndoBar.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 Compiling\ TaskEditorView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskEditorView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskEditorView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile TaskEditorView.swift
+
+SwiftDriverJobDiscovery normal x86_64 Compiling CapsuleAppearanceView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 Compiling\ AppearanceSettingsView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/AppearanceSettingsView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/AppearanceSettingsView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile AppearanceSettingsView.swift
+
+SwiftDriverJobDiscovery normal x86_64 Compiling HabitRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 Compiling\ TaskEditorView.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskEditorView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal x86_64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/TaskEditorView.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile TaskEditorView.swift
+
+SwiftDriverJobDiscovery normal x86_64 Compiling CompletionListView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 Compiling\ DeletionUndoBar.swift /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DeletionUndoBar.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftCompile normal arm64 /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock/Sources/FocusDockApp/UI/DeletionUndoBar.swift (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-SwiftPerFileCompile DeletionUndoBar.swift
+
+SwiftDriverJobDiscovery normal arm64 Compiling PanelWindowController.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal arm64 Compiling TaskEditorView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal arm64 Compiling DeletionUndoBar.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling TaskEditorView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling TaskRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling DockView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal arm64 Compiling DockView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling AppearanceSettingsView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal x86_64 Compiling PanelWindowController.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriver\ Compilation FocusDock normal x86_64 com.apple.xcode.tools.swift.compiler (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name FocusDock -Onone @/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target x86_64-apple-macos14.0 -g -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Index.noindex/DataStore -swift-version 5 -I /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -sdk-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-generated-files.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-own-target-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock-da937fbdf29a65fb12f76109c7dfcdf2-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-project-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/include -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources-normal/x86_64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources/x86_64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock-Swift.h -working-directory /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock -experimental-emit-module-separately -disable-cmo
+
+Ld /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock.debug.dylib normal x86_64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-macos14.0 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -filelist /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗.LinkFileList -install_name @rpath/FocusDock.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗_lto.o -rdynamic -Xlinker -dependency_info -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/FocusDock.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -framework FocusDockCore -Xlinker -no_adhoc_codesign -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock.debug.dylib
+
+SwiftDriverJobDiscovery normal arm64 Compiling TaskRowView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriverJobDiscovery normal arm64 Compiling AppearanceSettingsView.swift (in target 'FocusDock' from project 'FocusDock')
+
+SwiftDriver\ Compilation FocusDock normal arm64 com.apple.xcode.tools.swift.compiler (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-Swift-Compilation -- /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc -module-name FocusDock -Onone @/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗.SwiftFileList -DDEBUG -enable-bare-slash-regex -enable-experimental-feature DebugDescriptionMacro -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -target arm64-apple-macos14.0 -g -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -Xfrontend -serialize-debugging-options -enable-testing -index-store-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Index.noindex/DataStore -swift-version 5 -I /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -c -j10 -enable-batch-mode -incremental -Xcc -ivfsstatcache -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKStatCaches.noindex/macosx27.0-26A425-7231f6df4def33e022ae2eb8f782df1a.sdkstatcache -output-file-map /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-OutputFileMap.json -save-temps -no-color-diagnostics -explicit-module-build -module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules -clang-scanner-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex -sdk-module-cache-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules -emit-dependencies -emit-module -emit-module-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftmodule -serialize-diagnostics -dependency-scan-serialize-diagnostics-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-dependency-scan.dia -validate-clang-modules-once -clang-build-session-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/ModuleCache.noindex/Session.modulevalidation -Xcc -fmodules-prune-interval\=86400 -Xcc -fmodules-prune-after\=345600 -emit-const-values -const-gather-protocols-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock_const_extract_protocols.json -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-generated-files.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-own-target-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-all-non-framework-target-headers.hmap -Xcc -ivfsoverlay -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock-da937fbdf29a65fb12f76109c7dfcdf2-VFS/all-product-headers.yaml -Xcc -iquote -Xcc /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-project-headers.hmap -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/include -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources-normal/arm64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources/arm64 -Xcc -I/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/DerivedSources -emit-objc-header -emit-objc-header-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock-Swift.h -working-directory /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock -experimental-emit-module-separately -disable-cmo
+
+ConstructStubExecutorLinkFileList /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-ExecutorLinkFileList-normal-x86_64.txt (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    construct-stub-executor-link-file-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-ExecutorLinkFileList-normal-x86_64.txt
+note: Using stub executor library with Swift entry point. (in target 'FocusDock' from project 'FocusDock')
+
+Ld /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock.debug.dylib normal arm64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos14.0 -dynamiclib -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -L/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/EagerLinkingTBDs/Debug -F/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -filelist /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗.LinkFileList -install_name @rpath/FocusDock.debug.dylib -Xlinker -rpath -Xlinker /usr/lib/swift -Xlinker -rpath -Xlinker @executable_path/../Frameworks -Xlinker -object_path_lto -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗_lto.o -rdynamic -Xlinker -dependency_info -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗_dependency_info.dat -fobjc-link-runtime -L/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/macosx -L/usr/lib/swift -Xlinker -add_ast_path -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/FocusDock.swiftmodule -Xlinker -alias -Xlinker _main -Xlinker ___debug_main_executable_dylib_entry_point -framework FocusDockCore -Xlinker -no_adhoc_codesign -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock.debug.dylib
+
+CreateUniversalBinary /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock.debug.dylib normal arm64\ x86_64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock.debug.dylib /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock.debug.dylib -output /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock.debug.dylib
+
+ConstructStubExecutorLinkFileList /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-ExecutorLinkFileList-normal-arm64.txt (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    construct-stub-executor-link-file-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock.debug.dylib /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor_no_swift_entry_point.a /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib/libPreviewsJITStubExecutor.a --output /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-ExecutorLinkFileList-normal-arm64.txt
+note: Using stub executor library with Swift entry point. (in target 'FocusDock' from project 'FocusDock')
+
+Ld /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock normal x86_64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target x86_64-apple-macos14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/../Frameworks -rdynamic -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-DebugDylibPath-normal-x86_64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-DebugDylibInstallName-normal-x86_64.txt -Xlinker -filelist -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-ExecutorLinkFileList-normal-x86_64.txt /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock
+
+Ld /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock normal arm64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/clang -Xlinker -reproducible -target arm64-apple-macos14.0 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk -Os -Xlinker -no_warn_duplicate_libraries -L/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -F/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug -Xlinker -rpath -Xlinker @executable_path -Xlinker -rpath -Xlinker @executable_path/../Frameworks -rdynamic -e ___debug_blank_executor_main -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_dylib -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-DebugDylibPath-normal-arm64.txt -Xlinker -sectcreate -Xlinker __TEXT -Xlinker __debug_instlnm -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-DebugDylibInstallName-normal-arm64.txt -Xlinker -filelist -Xlinker /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗-ExecutorLinkFileList-normal-arm64.txt /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock.debug.dylib -Xlinker -no_adhoc_codesign -o /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock
+
+CreateUniversalBinary /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock normal arm64\ x86_64 (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/lipo -create /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/Binary/FocusDock /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/Binary/FocusDock -output /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock
+
+CopySwiftLibs /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-swiftStdLibTool --copy --verbose --sign - --scan-executable /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock.debug.dylib --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Frameworks --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/PlugIns --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Library/SystemExtensions --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Extensions --scan-folder /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/FocusDockCore.framework --platform macosx --toolchain /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --destination /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Frameworks --strip-bitcode --strip-bitcode-tool /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/bitcode_strip --emit-dependency-info /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/SwiftStdLibToolInputDependencies.dep --filter-for-swift-os --back-deploy-swift-span
+
+ExtractAppIntentsMetadata (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/appintentsmetadataprocessor --toolchain-dir /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain --module-name FocusDock --sdk-root /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX27.0.sdk --xcode-version 27A9275 --platform-family macOS --deployment-target 14.0 --bundle-identifier local.focusdock.app --output /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/Resources --target-triple arm64-apple-macos14.0 --target-triple x86_64-apple-macos14.0 --binary-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock --dependency-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗_dependency_info.dat --dependency-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗_dependency_info.dat --stringsdata-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/ExtractedAppShortcutsMetadata.stringsdata --stringsdata-file /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/ExtractedAppShortcutsMetadata.stringsdata --source-file-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗.SwiftFileList --source-file-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗.SwiftFileList --metadata-file-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗.DependencyMetadataFileList --static-metadata-file-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗.DependencyStaticMetadataFileList --swift-const-vals-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/arm64/干了吗.SwiftConstValuesFileList --swift-const-vals-list /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/Objects-normal/x86_64/干了吗.SwiftConstValuesFileList --compile-time-extraction --deployment-aware-processing --no-app-shortcuts-localization
+2026-10-29 20:01:18.787 appintentsmetadataprocessor[1229:1899351] Starting appintentsmetadataprocessor export
+2026-10-29 20:01:18.789 appintentsmetadataprocessor[1229:1899351] warning: Metadata extraction skipped, no AppIntents.framework dependency found
+
+CodeSign /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock.debug.dylib (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/FocusDock.debug.dylib
+
+CodeSign /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/__preview.dylib (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --timestamp\=none --generate-entitlement-der /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/__preview.dylib
+/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app/Contents/MacOS/__preview.dylib: replacing existing signature
+
+CodeSign /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    
+    Signing Identity:     "Sign to Run Locally"
+    
+    /usr/bin/codesign --force --sign - --entitlements /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/FocusDock.build/Debug/FocusDock.build/干了吗.app.xcent --timestamp\=none --generate-entitlement-der /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app
+
+Validate /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-validationUtility /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app -no-validate-extension -infoplist-subpath Contents/Info.plist
+
+RegisterWithLaunchServices /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app (in target 'FocusDock' from project 'FocusDock')
+    cd /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/outputs/FocusDock
+    builtin-lsregisterurl --record-path /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/XCBuildData/registered-launchservices.txt -- /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -f -R -trusted /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Products/Debug/干了吗.app
+
+PruneExplicitPrecompiledModules /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/SDKExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/SwiftExplicitPrecompiledModules
+
+PruneExplicitPrecompiledModules /Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Build/Intermediates.noindex/ExplicitPrecompiledModules
+
+2026-10-29 20:01:18.944 xcodebuild[932:1898879]  DVTAssertions: Warning in IDEFrameworks/IDEFoundation/Execution/LaunchSystem/IDELaunchSession.m:395
+Details:  setRunnablePIDWithDiagnostics:logSection:andCompletionHandler: called without a completion handler - blocking until diagnostics setup completes. Callers should migrate to using a completion handler for better performance.
+Object:   <IDELaunchSession: 0xaa489a700>
+Method:   -setRunnablePIDWithDiagnostics:logSection:andCompletionHandler:
+Thread:   <NSThread: 0xaa4425080>{number = 5, name = (null)}
+Please file a bug at https://feedbackassistant.apple.com with this warning message and any useful information you can provide.
+Test Suite 'All tests' started at 2026-10-29 20:01:19.547.
+Test Suite 'All tests' passed at 2026-10-29 20:01:19.548.
+	 Executed 0 tests, with 0 failures (0 unexpected) in 0.000 (0.000) seconds
+◇ Test run started.
+↳ Testing Library Version: 2084
+↳ Target Platform: arm64e-apple-macos14.0
+◇ Test naturalLanguageExtractsChineseTimeAndTask() started.
+◇ Test correctedSpeechResultsReplacePartialWordsWithoutConcatenatingDuplicates() started.
+◇ Test appearanceSettingsRoundTripAndNeverTouchTaskOrWindowPreferences() started.
+◇ Test manualCollapseWaitsForPointerExitBeforeHoverReopens() started.
+◇ Test failedUndoRemainsAvailableForRetry() started.
+◇ Test firstUpgradeRetainsClassicCapsuleAndDelays() started.
+◇ Test swiftDataCRUDSurvivesReopeningTheStore() started.
+◇ Test noSpeechIsNeverReportedAsSuccessfulCapture() started.
+◇ Test editingAndDraggingPreventUnexpectedCollapse() started.
+◇ Test ambiguousMissingAndInvalidTimesRequireConfirmation() started.
+◇ Test originalTaskStoreMigratesWithoutDataLoss() started.
+◇ Test focusWallClockPauseResumeAndReopeningAreAccurate() started.
+◇ Test streakUsesHistoryGapsAndNeverCountsFuture() started.
+◇ Test userPanelSizeClampsToUsableMinimumAndScreen() started.
+◇ Test draggingAcrossScreenKeepsCollapseReopenAnchorStable() started.
+◇ Test previousVersionStoreAddsDefaultRemindersWithoutLosingFields() started.
+◇ Test multipleTasksKeepDatesAndExplicitReminderRequirements() started.
+◇ Test edgeSnapRespectsThresholdAndClampsSmallDisplays() started.
+◇ Test resizingStaysInsideNegativeOriginDisplayAndPreservesUsableFrame() started.
+◇ Test pausingAnExpiredFocusDoesNotFreezeAnUnfinishedZeroTimer() started.
+◇ Test calendarWeekAbsoluteDateAndRelativeDurationAreCorrect() started.
+◇ Test hoverMustStillBeInsideWhenDelayEnds() started.
+◇ Test emptyFinalSpeechResultDoesNotEraseRecognizedWords() started.
+◇ Test confirmedBatchIsAtomicAndReminderChoicesPersist() started.
+◇ Test habitCRUDAndHistorySurviveReopening() started.
+◇ Test placementHandlesNegativeDisplayOriginsAndResolutionChanges() started.
+◇ Test multipleTaskClockCanInheritThePreviousExplicitDay() started.
+◇ Test remindersAreFutureOnlyDeduplicatedAndStableAcrossEdits() started.
+◇ Test individualCheckInUndoRequiresParentAndNeverDuplicates() started.
+◇ Test menuRevealPinsAndEscapeCollapses() started.
+◇ Test mondayWeeksSurviveYearBoundaryAndDST() started.
+◇ Test repositoryRejectsBlankTitlesAndSortsActionableTasks() started.
+◇ Test countdownFormatsPausedRunningAndFinishedSessions() started.
+◇ Test roundedTransparentCornersAreExcludedButCenterAndEdgesAreInteractive() started.
+◇ Test presetsScalesAndRadiiStayBounded() started.
+◇ Test ordinaryTaskWordsAreNotMistakenForTimeExpressions() started.
+◇ Test reentryCancelsCollapseAndPinSurvivesLeaving() started.
+◇ Test habitCompletionProjectionTracksDatesUndoAndReopening() started.
+◇ Test unpunctuatedSpeechCanStillProduceTwoDatedTasks() started.
+◇ Test autoExpansionUsesAvailableSideAndNeverLeavesNegativeOriginScreen() started.
+◇ Test reminderQueueCancelsCompletedRequestsAndOnlyReschedulesChangedDates() started.
+◇ Test expansionDirectionCanRemainStableWhileResizingOrDragging() started.
+◇ Test habitDeletionUndoRestoresAllHistoricalCheckIns() started.
+◇ Test speechFailureAndTimeoutKeepUsablePartialText() started.
+◇ Test collapsedDragDoesNotExpandMidGesture() started.
+◇ Test placementClampsAllEdgesAndSmallScreens() started.
+◇ Test habitNamesRejectBlankEditsWithoutLosingHistory() started.
+◇ Test checkInsAreIndependentByHabitAndCivilDay() started.
+◇ Test quickEditsPreserveOtherTaskFieldsAndSurviveRestart() started.
+◇ Test changingPresetKeepsNearestVisibleEdgesWithoutJumping() started.
+◇ Test savedManualSizeTakesPriorityAndDefaultsKeepDeadlineGrowth() started.
+◇ Test openMenuPreventsCollapseAndResumesWhenDismissed() started.
+◇ Test todaySummaryExcludesFutureTasksAndHasSafeEmptyProgress() started.
+◇ Test deletedTaskUndoPreservesIdentityCompletionAndRemindersAcrossReopen() started.
+◇ Test urgencyHasBoundedMonotonicGrowthAndNoTaskCountDependency() started.
+◇ Test categoriesPersistAndNormalizeWithoutChangingTaskIdentity() started.
+◇ Test multipleDeletesUndoNewestFirstAndExpireAtTenSeconds() started.
+✔ Test correctedSpeechResultsReplacePartialWordsWithoutConcatenatingDuplicates() passed after 0.008 seconds.
+✔ Test noSpeechIsNeverReportedAsSuccessfulCapture() passed after 0.008 seconds.
+✔ Test firstUpgradeRetainsClassicCapsuleAndDelays() passed after 0.008 seconds.
+✔ Test manualCollapseWaitsForPointerExitBeforeHoverReopens() passed after 0.009 seconds.
+✔ Test editingAndDraggingPreventUnexpectedCollapse() passed after 0.009 seconds.
+✔ Test edgeSnapRespectsThresholdAndClampsSmallDisplays() passed after 0.003 seconds.
+✔ Test pausingAnExpiredFocusDoesNotFreezeAnUnfinishedZeroTimer() passed after 0.003 seconds.
+✔ Test naturalLanguageExtractsChineseTimeAndTask() passed after 0.009 seconds.
+✔ Test resizingStaysInsideNegativeOriginDisplayAndPreservesUsableFrame() passed after 0.003 seconds.
+✔ Test hoverMustStillBeInsideWhenDelayEnds() passed after 0.003 seconds.
+✔ Test emptyFinalSpeechResultDoesNotEraseRecognizedWords() passed after 0.003 seconds.
+✔ Test draggingAcrossScreenKeepsCollapseReopenAnchorStable() passed after 0.004 seconds.
+✔ Test userPanelSizeClampsToUsableMinimumAndScreen() passed after 0.005 seconds.
+✔ Test focusWallClockPauseResumeAndReopeningAreAccurate() passed after 0.005 seconds.
+✔ Test remindersAreFutureOnlyDeduplicatedAndStableAcrossEdits() passed after 0.005 seconds.
+✔ Test placementHandlesNegativeDisplayOriginsAndResolutionChanges() passed after 0.005 seconds.
+✔ Test menuRevealPinsAndEscapeCollapses() passed after 0.005 seconds.
+✔ Test countdownFormatsPausedRunningAndFinishedSessions() passed after 0.005 seconds.
+✔ Test roundedTransparentCornersAreExcludedButCenterAndEdgesAreInteractive() passed after 0.005 seconds.
+✔ Test presetsScalesAndRadiiStayBounded() passed after 0.004 seconds.
+✔ Test reentryCancelsCollapseAndPinSurvivesLeaving() passed after 0.004 seconds.
+✔ Test expansionDirectionCanRemainStableWhileResizingOrDragging() passed after 0.004 seconds.
+✔ Test autoExpansionUsesAvailableSideAndNeverLeavesNegativeOriginScreen() passed after 0.005 seconds.
+✔ Test collapsedDragDoesNotExpandMidGesture() passed after 0.004 seconds.
+✔ Test speechFailureAndTimeoutKeepUsablePartialText() passed after 0.005 seconds.
+✔ Test reminderQueueCancelsCompletedRequestsAndOnlyReschedulesChangedDates() passed after 0.005 seconds.
+✔ Test unpunctuatedSpeechCanStillProduceTwoDatedTasks() passed after 0.005 seconds.
+✔ Test placementClampsAllEdgesAndSmallScreens() passed after 0.004 seconds.
+✔ Test mondayWeeksSurviveYearBoundaryAndDST() passed after 0.005 seconds.
+✔ Test urgencyHasBoundedMonotonicGrowthAndNoTaskCountDependency() passed after 0.002 seconds.
+✔ Test savedManualSizeTakesPriorityAndDefaultsKeepDeadlineGrowth() passed after 0.002 seconds.
+✔ Test openMenuPreventsCollapseAndResumesWhenDismissed() passed after 0.002 seconds.
+✔ Test streakUsesHistoryGapsAndNeverCountsFuture() passed after 0.010 seconds.
+✔ Test changingPresetKeepsNearestVisibleEdgesWithoutJumping() passed after 0.002 seconds.
+✔ Test ordinaryTaskWordsAreNotMistakenForTimeExpressions() passed after 0.005 seconds.
+✔ Test multipleTaskClockCanInheritThePreviousExplicitDay() passed after 0.005 seconds.
+✔ Test appearanceSettingsRoundTripAndNeverTouchTaskOrWindowPreferences() passed after 0.010 seconds.
+✔ Test multipleTasksKeepDatesAndExplicitReminderRequirements() passed after 0.005 seconds.
+✔ Test ambiguousMissingAndInvalidTimesRequireConfirmation() passed after 0.010 seconds.
+✔ Test calendarWeekAbsoluteDateAndRelativeDurationAreCorrect() passed after 0.007 seconds.
+✔ Test swiftDataCRUDSurvivesReopeningTheStore() passed after 0.026 seconds.
+✔ Test failedUndoRemainsAvailableForRetry() passed after 0.026 seconds.
+✔ Test originalTaskStoreMigratesWithoutDataLoss() passed after 0.135 seconds.
+✔ Test previousVersionStoreAddsDefaultRemindersWithoutLosingFields() passed after 0.140 seconds.
+✔ Test confirmedBatchIsAtomicAndReminderChoicesPersist() passed after 0.149 seconds.
+✔ Test habitCRUDAndHistorySurviveReopening() passed after 0.164 seconds.
+✔ Test individualCheckInUndoRequiresParentAndNeverDuplicates() passed after 0.166 seconds.
+✔ Test repositoryRejectsBlankTitlesAndSortsActionableTasks() passed after 0.168 seconds.
+✔ Test habitCompletionProjectionTracksDatesUndoAndReopening() passed after 0.176 seconds.
+✔ Test habitDeletionUndoRestoresAllHistoricalCheckIns() passed after 0.178 seconds.
+✔ Test habitNamesRejectBlankEditsWithoutLosingHistory() passed after 0.177 seconds.
+✔ Test checkInsAreIndependentByHabitAndCivilDay() passed after 0.180 seconds.
+✔ Test quickEditsPreserveOtherTaskFieldsAndSurviveRestart() passed after 0.186 seconds.
+✔ Test todaySummaryExcludesFutureTasksAndHasSafeEmptyProgress() passed after 0.186 seconds.
+✔ Test deletedTaskUndoPreservesIdentityCompletionAndRemindersAcrossReopen() passed after 0.192 seconds.
+✔ Test categoriesPersistAndNormalizeWithoutChangingTaskIdentity() passed after 0.201 seconds.
+✔ Test multipleDeletesUndoNewestFirstAndExpireAtTenSeconds() passed after 0.201 seconds.
+✔ Test run with 57 tests in 0 suites passed after 0.209 seconds.
+2026-10-29 20:01:20.043 xcodebuild[932:1898853] [MT] IDETestOperationsObserverDebug: 1.180 elapsed -- Testing started completed.
+2026-10-29 20:01:20.043 xcodebuild[932:1898853] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-29 20:01:20.043 xcodebuild[932:1898853] [MT] IDETestOperationsObserverDebug: 1.180 sec, +1.180 sec -- end
+
+Test session results, code coverage, and logs:
+	/Users/lee/Documents/Codex/2026-10-25/referenced-chatgpt-conversation-this-is-an/work-xcode/XcodeBuild/Logs/Test/Test-FocusDock-2026.10.29_20-01-15-+0800.xcresult
+
+** TEST SUCCEEDED **
+
+Testing started

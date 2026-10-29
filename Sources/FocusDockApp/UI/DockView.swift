@@ -43,17 +43,16 @@ struct DockView: View {
         .tint(DockStyle.accent)
         .onChange(of: composerFocused) { _, value in controller.setComposerFocused(value) }
         .onChange(of: controller.captureSaved) { _, _ in taskInput = ""; tab = .tasks }
-        .onChange(of: repository.items.count) { old, new in if new > old { tab = .tasks } }
         .alert("操作未完成", isPresented: Binding(get: { controller.errorMessage != nil }, set: { if !$0 { controller.errorMessage = nil } })) {
             Button("好", role: .cancel) { controller.errorMessage = nil }
         } message: { Text(controller.errorMessage ?? "") }
     }
 
     private var capsule: some View {
-        CapsuleAppearanceView(appearance: controller.floatingAppearance, count: repository.items.filter { !$0.isCompleted }.count, deadline: controller.nearestDeadlineTitle, urgent: controller.urgency != .normal)
+        LiveCapsuleView(controller: controller, repository: repository, timer: controller.focusTimer)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(DragRegion(controller: controller, onClick: { controller.togglePin() }).frame(maxWidth: .infinity, maxHeight: .infinity))
-        .accessibilityElement(children: .ignore)
+        .accessibilityElement(children: .contain)
         .accessibilityLabel("干了吗，\(repository.items.filter { !$0.isCompleted }.count) 项待办")
         .accessibilityAddTraits(.isButton).accessibilityAction { controller.togglePin() }
         .help(controller.urgency == .normal ? "悬停展开 · 点击锁定 · 拖动移动" : "\(controller.urgency.title) · 悬停查看")
@@ -89,6 +88,7 @@ struct DockView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transition(.opacity)
+                DeletionUndoBar(undo: controller.deletionUndo, controller: controller)
                 composer
             }
         }
@@ -117,7 +117,7 @@ struct DockView: View {
                 .accessibilityLabel(controller.interaction.isPinned ? "取消锁定" : "锁定展开")
                 .accessibilityValue(controller.interaction.isPinned ? "已固定" : "未固定")
                 .help(controller.interaction.isPinned ? "已固定：点击解锁，移开鼠标后自动收起" : "点击固定：移开鼠标仍保持展开")
-            NotificationControl(reminders: controller.reminders)
+            NotificationControl(reminders: controller.reminders, controller: controller)
             Menu {
                 Button("悬浮外观设置…") { controller.openAppearanceSettings() }
                 Divider()
@@ -126,7 +126,7 @@ struct DockView: View {
                 }
                 Divider()
                 Toggle("DDL 临近时增大窗口", isOn: $controller.deadlineGrowthEnabled)
-                Button("启用系统提醒") { Task { await controller.reminders.enable() } }
+                Button("启用系统提醒") { Task { await controller.reminders.enableOrOpenSettings() } }
                 Button("收起窗口", systemImage: "minus") { controller.collapse() }.disabled(controller.hasEditor)
                 Button("移到鼠标所在屏幕") { controller.moveToPointerScreen() }
                 Button("放大窗口") { controller.scaleWindow(1.15) }

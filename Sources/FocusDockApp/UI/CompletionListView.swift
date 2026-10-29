@@ -57,11 +57,34 @@ struct CompletionListView: View {
 
 struct NotificationControl: View {
     @ObservedObject var reminders: NativeReminderService
+    @ObservedObject var controller: PanelWindowController
+    @State private var presented = false
     var body: some View {
-        Button { Task { await reminders.enable() } } label: {
+        Button { presented.toggle() } label: {
             Image(systemName: reminders.isAuthorized ? "bell.badge" : "bell.slash")
-                .font(.system(size: 12)).foregroundStyle(.secondary).frame(width: 24, height: 26)
+                .font(.system(size: 12)).foregroundStyle(reminders.isDenied ? Color.orange.opacity(0.85) : .secondary)
+                .frame(width: 28, height: 28).contentShape(Rectangle())
         }.buttonStyle(.plain).help(reminders.status)
             .accessibilityLabel("系统提醒：\(reminders.status)")
+            .onChange(of: presented) { _, value in controller.setNotificationGuidePresented(value) }
+            .onDisappear { controller.setNotificationGuidePresented(false) }
+            .popover(isPresented: $presented, arrowEdge: .top) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Label(reminders.isAuthorized ? "系统提醒已开启" : reminders.isDenied ? "系统提醒未开启" : "开启截止提醒", systemImage: reminders.isAuthorized ? "bell.badge" : "bell.slash")
+                        .font(.system(size: 13, weight: .semibold))
+                    Text(reminders.isDenied ? "截止提醒暂时无法送达。打开系统设置，在通知列表中选择「干了吗」，开启「允许通知」。" : reminders.isAuthorized ? "\(reminders.status)。系统勿扰和休眠仍可能影响提醒。" : "允许通知后，才能收到任务的截止提醒。")
+                        .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    if reminders.settingsOpenFailed { Text("未能打开设置，请手动前往系统设置 → 通知 → 干了吗。").font(.system(size: 10)).foregroundStyle(.orange) }
+                    HStack {
+                        Button("重新检查") { Task { await reminders.refreshAndSync() } }
+                        Spacer()
+                        Button(reminders.isAuthorized || reminders.isDenied ? "打开通知设置" : "允许通知") {
+                            if reminders.isAuthorized || reminders.isDenied { reminders.openSettings() }
+                            else { Task { await reminders.enable() } }
+                        }.buttonStyle(.borderedProminent).tint(DockStyle.accent)
+                    }.font(.system(size: 11))
+                }.padding(16).frame(width: 270)
+                .task { await reminders.refreshAndSync() }
+            }
     }
 }

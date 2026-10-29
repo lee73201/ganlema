@@ -1,3 +1,5 @@
+> 当前0.6.0三项功能与57项测试见 [VALIDATION-QUALITY-THREE.md](VALIDATION-QUALITY-THREE.md)。
+
 > 当前0.5.2图钉点击区域修复见 [VALIDATION-PIN-FIX.md](VALIDATION-PIN-FIX.md)。
 
 > 当前0.5.1外观/快速编辑/专注的构建与实机验收见 [VALIDATION-APPEARANCE.md](VALIDATION-APPEARANCE.md)。以下保留旧阶段记录。

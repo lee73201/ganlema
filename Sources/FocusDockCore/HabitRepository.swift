@@ -68,6 +68,18 @@ public final class HabitRepository: ObservableObject {
         let keys = Set(checkIns.filter { $0.habitID == habit.id }.map(\.dayKey))
         return HabitCalendar.streak(dayKeys: keys, asOf: date, calendar: calendar)
     }
+    public func restore(_ snapshot: DeletedHabitSnapshot) throws {
+        guard !habits.contains(where: { $0.id == snapshot.id }) else { throw DeletionRestoreError.alreadyExists }
+        let habit = Habit(name: snapshot.name); habit.id = snapshot.id; habit.createdAt = snapshot.createdAt
+        context.insert(habit)
+        for record in snapshot.records { context.insert(HabitCheckIn(habitID: record.habitID, dayKey: record.dayKey)) }
+        try commit()
+    }
+    public func restore(_ snapshot: DeletedCheckInSnapshot) throws {
+        guard habits.contains(where: { $0.id == snapshot.habitID }) else { throw DeletionRestoreError.missingHabit }
+        guard !checkIns.contains(where: { $0.habitID == snapshot.habitID && $0.dayKey == snapshot.dayKey }) else { throw DeletionRestoreError.alreadyExists }
+        context.insert(HabitCheckIn(habitID: snapshot.habitID, dayKey: snapshot.dayKey)); try commit()
+    }
     private func validated(_ name: String) throws -> String {
         let name = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !name.isEmpty else { throw HabitRepositoryError.emptyName }

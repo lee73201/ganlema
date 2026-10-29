@@ -25,6 +25,7 @@ import FocusDockCore
         if value.pausedRemaining == nil { value.pause(at: .now) } else { value.resume(at: .now) }
         session = value; now = .now; persist()
     }
+    func restore(_ value: FocusSession) { session = value; now = .now; finished = value.isFinished(at: now); persist() }
     func stop() { session = nil; finished = false; persist() }
     private func persist() {
         if let session, let data = try? JSONEncoder().encode(session) { defaults.set(data, forKey: key) }

@@ -7,24 +7,43 @@ import FocusDockCore
 final class NativeReminderService: NSObject, ObservableObject, ReminderService, UNUserNotificationCenterDelegate {
     @Published private(set) var status = "提醒尚未启用"
     @Published private(set) var isAuthorized = false
+    @Published private(set) var isDenied = false
+    @Published private(set) var settingsOpenFailed = false
     @Published private(set) var pendingCount = 0
     private let center: UNUserNotificationCenter
     private var desired: [PlannedReminder] = []
     private var activeTaskIDs: Set<String> = []
     private var revision = 0
     private var worker: Task<Void, Never>?
+    private var activationObserver: NSObjectProtocol?
     var onOpen: ((UUID?) -> Void)?
     override init() {
         center = .current()
         super.init()
         center.delegate = self
+        activationObserver = NotificationCenter.default.addObserver(forName: NSApplication.didBecomeActiveNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in self?.revision += 1; self?.startSync() }
+        }
     }
+    deinit { if let activationObserver { NotificationCenter.default.removeObserver(activationObserver) } }
     func refreshAuthorization() async {
         let settings = await center.notificationSettings()
+        isDenied = settings.authorizationStatus == .denied
         isAuthorized = settings.authorizationStatus == .authorized || settings.authorizationStatus == .provisional
         status = isAuthorized ? "系统提醒已启用" : settings.authorizationStatus == .denied ? "系统提醒被关闭，可在系统设置中开启" : "提醒尚未启用，点击启用"
     }
+    func refreshAndSync() async { await refreshAuthorization(); revision += 1; startSync() }
+    func openSettings() {
+        let url = URL(string: "x-apple.systempreferences:com.apple.Notifications-Settings.extension")!
+        settingsOpenFailed = !NSWorkspace.shared.open(url)
+    }
+    func enableOrOpenSettings() async {
+        await refreshAuthorization()
+        if isDenied { openSettings() } else { await enable() }
+    }
     func enable() async {
+        await refreshAuthorization()
+        if isDenied { return }
         do {
             let allowed = try await center.requestAuthorization(options: [.alert, .sound])
             await refreshAuthorization()

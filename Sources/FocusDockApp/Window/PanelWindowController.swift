@@ -86,6 +86,7 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
             applyFrame(); cancelTimers(); send(interaction.isInside ? .enter : .leave); refreshPointer()
         }
     }
+    let deletionUndo = DeletionUndo()
     let focusTimer: FocusTimer
     private var settingsWindow: NSWindow?
     private var pointerTimer: AnyCancellable?
@@ -119,6 +120,7 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     private var applyingFrame = false
     private var nativeResizeActive = false
     private var composerFocused = false
+    private var notificationGuidePresented = false
     private var quickEditors = Set<UUID>()
     private var materialView: PanelMaterialView<DockView>?
     private var pendingUrgency = DeadlineUrgency.normal
@@ -320,7 +322,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     }
     func setComposerFocused(_ focused: Bool) { composerFocused = focused; syncEditingState() }
     func setQuickEditing(_ id: UUID, active: Bool) { if active { quickEditors.insert(id) } else { quickEditors.remove(id) }; syncEditingState() }
-    private func syncEditingState() { send(.editing(hasEditor || composerFocused || !quickEditors.isEmpty)) }
+    func setNotificationGuidePresented(_ value: Bool) { notificationGuidePresented = value; syncEditingState() }
+    private func syncEditingState() { send(.editing(hasEditor || composerFocused || !quickEditors.isEmpty || notificationGuidePresented)) }
     func beginEditingHabit(_ habit: Habit) {
         editor = nil
         editingHabit = habit
@@ -340,13 +343,30 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         do { try repository.add(TaskDraft(title: title)); return true }
         catch { errorMessage = error.localizedDescription; return false }
     }
-    func toggleHabit(_ habit: Habit, date: Date) { perform { try habits.toggle(habit, on: date) } }
-    func removeCheckIn(_ record: HabitCheckIn) { perform { try habits.removeCheckIn(record) } }
-    func deleteHabit(_ habit: Habit) { perform { try habits.delete(habit) } }
+    func toggleHabit(_ habit: Habit, date: Date) {
+        if let record = habits.checkIns.first(where: { $0.habitID == habit.id && $0.dayKey == HabitCalendar.key(for: date) }) { removeCheckIn(record) }
+        else { perform { try habits.toggle(habit, on: date) } }
+    }
+    func removeCheckIn(_ record: HabitCheckIn) {
+        let snapshot = DeletedCheckInSnapshot(record)
+        do {
+            try habits.removeCheckIn(record)
+            deletionUndo.offer("已移除本次打卡") { [habits] in try habits.restore(snapshot) }
+        } catch { errorMessage = error.localizedDescription }
+    }
+    func deleteHabit(_ habit: Habit) {
+        let snapshot = DeletedHabitSnapshot(habit, records: habits.checkIns)
+        do {
+            try habits.delete(habit)
+            deletionUndo.offer("已删除习惯及打卡记录") { [habits] in try habits.restore(snapshot) }
+        } catch { errorMessage = error.localizedDescription }
+    }
+    func undoDeletion() { perform { try deletionUndo.undo() } }
     func save(_ draft: TaskDraft, item: TodoItem?) {
         do {
             if let item { try repository.update(item, with: draft) } else { try repository.add(draft) }
             endEditing()
+            if item == nil { captureSaved = UUID() }
             if let due = draft.dueDate, due > .now, !draft.reminderOffsets.isEmpty { Task { [weak self] in await self?.reminders.enable() } }
         } catch { errorMessage = error.localizedDescription }
     }
@@ -363,8 +383,15 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         if item.isCompleted && focusTimer.session?.taskID == item.id { focusTimer.stop() }
     }
     func delete(_ item: TodoItem) {
-        let id = item.id; perform { try repository.delete(item) }
-        if !repository.items.contains(where: { $0.id == id }) && focusTimer.session?.taskID == id { focusTimer.stop() }
+        let snapshot = DeletedTaskSnapshot(item)
+        let session = focusTimer.session?.taskID == item.id ? focusTimer.session : nil
+        do {
+            try repository.delete(item)
+            deletionUndo.offer("已删除任务") { [weak self, repository] in
+                try repository.restore(snapshot)
+                if let session, self?.focusTimer.session == nil { self?.focusTimer.restore(session) }
+            }
+        } catch { errorMessage = error.localizedDescription }
     }
     func startFocus(_ item: TodoItem, minutes: Int) { focusTimer.start(item, minutes: minutes) }
     func openAppearanceSettings() {
