@@ -11,6 +11,7 @@ final class PanelMaterialView<Content: View>: NSView {
     private let tint = NSView()
     private var edges: [NSLayoutConstraint] = []
     private var expandedState = false
+    private var expandedOpacity = 1.0
     private var appearanceState = FloatingAppearance()
     override var isOpaque: Bool { false }
     init(host: NSHostingView<Content>) {
@@ -38,14 +39,38 @@ final class PanelMaterialView<Content: View>: NSView {
         surface.layer?.cornerRadius = radius
         layer?.shadowPath = CGPath(roundedRect: surface.frame, cornerWidth: radius, cornerHeight: radius, transform: nil)
     }
-    func configure(expanded: Bool, appearance: FloatingAppearance) {
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        updateBackdrop()
+    }
+
+    func setExpandedBackdropOpacity(_ opacity: Double) {
+        expandedOpacity = opacity
+        updateBackdrop()
+    }
+
+    private func updateBackdrop() {
+        effect.alphaValue = expandedState ? expandedOpacity : appearanceState.opacity
+        if expandedState {
+            let dark = effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
+            // At low glass opacity, use a neutral tint to keep text visible over the opposite theme.
+            let tintStrength = (1 - expandedOpacity) * (dark ? 0.78 : 0.58)
+            let base: NSColor = dark ? .black : .white
+            tint.layer?.backgroundColor = base.withAlphaComponent(tintStrength).cgColor
+        } else {
+            tint.layer?.backgroundColor = appearanceState.shape == .island
+                ? NSColor.black.withAlphaComponent(0.7 + appearanceState.opacity * 0.2).cgColor
+                : NSColor.clear.cgColor
+        }
+    }
+
+    func configure(expanded: Bool, appearance: FloatingAppearance, expandedOpacity: Double = 1) {
         expandedState = expanded; appearanceState = appearance
         let inset: CGFloat = expanded ? 0 : 4
         edges[0].constant = inset; edges[1].constant = -inset; edges[2].constant = inset; edges[3].constant = -inset
         effect.material = expanded ? .popover : appearance.material == .menu ? .menu : appearance.material == .hud ? .hudWindow : .popover
         effect.appearance = !expanded && appearance.shape == .island ? NSAppearance(named: .darkAqua) : nil
-        effect.alphaValue = expanded ? 1 : appearance.opacity
-        tint.layer?.backgroundColor = !expanded && appearance.shape == .island ? NSColor.black.withAlphaComponent(0.7 + appearance.opacity * 0.2).cgColor : NSColor.clear.cgColor
+        setExpandedBackdropOpacity(expandedOpacity)
         layer?.shadowColor = NSColor.black.cgColor
         layer?.shadowOpacity = !expanded && appearance.shadow == .subtle ? 0.16 : 0
         layer?.shadowRadius = 3; layer?.shadowOffset = CGSize(width: 0, height: -1)

@@ -3,6 +3,11 @@ import FocusDockCore
 
 struct DockStyle {
     static let accent = Color(red: 0.44, green: 0.59, blue: 0.51)
+    static let inset: CGFloat = 16
+    static var separator: some View { Rectangle().fill(.primary.opacity(0.12)).frame(height: 0.5).allowsHitTesting(false) }
+    static func deadlineColor(in scheme: ColorScheme) -> Color {
+        scheme == .dark ? Color(red: 0.95, green: 0.70, blue: 0.45) : Color(red: 0.55, green: 0.28, blue: 0.10)
+    }
 }
 
 enum DockTab: String, CaseIterable, Identifiable {
@@ -19,7 +24,8 @@ struct DockView: View {
     @State private var habitInput = ""
     @State private var weekOffset = 0
     @FocusState private var composerFocused: Bool
-    @Namespace private var tabHighlight
+    @State private var opacityControlsVisible = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Group {
@@ -40,7 +46,9 @@ struct DockView: View {
         }
         .clipShape(RoundedRectangle(cornerRadius: controller.interaction.isExpanded ? 18 : controller.capsuleRadius))
         .preferredColorScheme(controller.interaction.isExpanded ? controller.theme.colorScheme : (controller.floatingAppearance.shape == .island ? .dark : controller.floatingAppearance.scheme))
-        .tint(DockStyle.accent)
+        .onChange(of: controller.interaction.isPinned) { _, pinned in
+            if !pinned { opacityControlsVisible = false }
+        }
         .onChange(of: composerFocused) { _, value in controller.setComposerFocused(value) }
         .onChange(of: controller.captureSaved) { _, _ in taskInput = ""; tab = .tasks }
         .alert("操作未完成", isPresented: Binding(get: { controller.errorMessage != nil }, set: { if !$0 { controller.errorMessage = nil } })) {
@@ -53,9 +61,9 @@ struct DockView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .overlay(DragRegion(controller: controller, onClick: { controller.togglePin() }).frame(maxWidth: .infinity, maxHeight: .infinity))
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("干了吗，\(repository.items.filter { !$0.isCompleted }.count) 项待办")
+        .accessibilityLabel(controller.interaction.isQuiet ? "干了吗，安静胶囊" : "干了吗，\(repository.items.filter { !$0.isCompleted }.count) 项待办")
         .accessibilityAddTraits(.isButton).accessibilityAction { controller.togglePin() }
-        .help(controller.urgency == .normal ? "悬停展开 · 点击锁定 · 拖动移动" : "\(controller.urgency.title) · 悬停查看")
+        .help(controller.interaction.isQuiet ? "安静胶囊 · 点击打开 · 拖动移动" : controller.urgency == .normal ? "悬停展开 · 点击锁定 · 拖动移动" : "\(controller.urgency.title) · 悬停查看")
     }
 
     private var expanded: some View {
@@ -65,13 +73,14 @@ struct DockView: View {
                     .overlay(DragRegion(controller: controller))
                     .help("拖动以移动编辑窗口")
             } else {
-                VStack(spacing: 16) {
+                VStack(spacing: 10) {
                     clockHeader
+                    if controller.interaction.isPinned && opacityControlsVisible { opacityControls }
                     progress
                     tabs
-                }.padding(.horizontal, 20).padding(.top, 18).padding(.bottom, 12)
+                }.padding(.horizontal, DockStyle.inset).padding(.top, 14).padding(.bottom, 8)
             }
-            if !controller.hasEditor { FocusTimerBar(timer: controller.focusTimer) }
+            if !controller.hasEditor { FocusTimerBar(timer: controller.focusTimer, controller: controller) }
             if let session = controller.capture {
                 TaskCaptureView(session: session, controller: controller).id(session.id)
             } else if controller.voicePresented {
@@ -88,6 +97,7 @@ struct DockView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .transition(.opacity)
+                .animation(reduceMotion ? nil : .easeInOut(duration: 0.16), value: tab)
                 DeletionUndoBar(undo: controller.deletionUndo, controller: controller)
                 composer
             }
@@ -95,13 +105,15 @@ struct DockView: View {
     }
 
     private var clockHeader: some View {
-        HStack(alignment: .top, spacing: 8) {
+        HStack(alignment: .top, spacing: 4) {
             TimelineView(.periodic(from: Date(timeIntervalSince1970: floor(Date().timeIntervalSince1970 / 60) * 60), by: 60)) { context in
-                VStack(alignment: .leading, spacing: 3) {
-                    Text(Self.timeFormatter.string(from: context.date))
-                        .font(.system(size: 34, weight: .light)).monospacedDigit()
-                    Text(context.date, format: .dateTime.month().day().weekday(.wide))
-                        .font(.system(size: 11)).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("干了吗").font(.system(size: 18, weight: .semibold)).accessibilityAddTraits(.isHeader)
+                    HStack(spacing: 5) {
+                        Text(Self.timeFormatter.string(from: context.date)).monospacedDigit()
+                        Text("·").accessibilityHidden(true)
+                        Text(context.date, format: .dateTime.month().day().weekday(.abbreviated)).lineLimit(1)
+                    }.font(.system(size: 11)).foregroundStyle(.secondary)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
             .overlay(DragRegion(controller: controller).frame(maxWidth: .infinity, maxHeight: .infinity))
@@ -111,15 +123,30 @@ struct DockView: View {
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(controller.interaction.isPinned ? DockStyle.accent : .secondary)
                     .frame(width: 28, height: 28)
-                    .background(controller.interaction.isPinned ? DockStyle.accent.opacity(0.16) : Color.primary.opacity(0.04), in: RoundedRectangle(cornerRadius: 7))
+                    .background(controller.interaction.isPinned ? Color.primary.opacity(0.08) : .clear, in: RoundedRectangle(cornerRadius: 6))
                     .contentShape(Rectangle())
             }.buttonStyle(.plain)
                 .accessibilityLabel(controller.interaction.isPinned ? "取消锁定" : "锁定展开")
                 .accessibilityValue(controller.interaction.isPinned ? "已固定" : "未固定")
                 .help(controller.interaction.isPinned ? "已固定：点击解锁，移开鼠标后自动收起" : "点击固定：移开鼠标仍保持展开")
+            if controller.interaction.isPinned {
+                Button {
+                    opacityControlsVisible.toggle()
+                } label: {
+                    Image(systemName: "circle.lefthalf.filled")
+                        .font(.system(size: 13, weight: .medium)).foregroundStyle(.secondary)
+                        .frame(width: 28, height: 28).contentShape(Rectangle())
+                        .background(opacityControlsVisible ? Color.primary.opacity(0.08) : .clear, in: RoundedRectangle(cornerRadius: 6))
+                }.buttonStyle(.plain)
+                    .accessibilityLabel("固定面板透明度")
+                    .accessibilityValue(opacityControlsVisible ? "已展开" : "已收起")
+                    .help("调整固定面板的背景透明度")
+            }
             NotificationControl(reminders: controller.reminders, controller: controller)
             Menu {
                 Button("悬浮外观设置…") { controller.openAppearanceSettings() }
+                Button(controller.interaction.isQuiet ? "关闭安静胶囊" : "开启安静胶囊") { controller.toggleQuietMode() }
+                    .disabled(!controller.canToggleQuietMode)
                 Divider()
                 Picker("外观", selection: $controller.theme) {
                     ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
@@ -136,70 +163,69 @@ struct DockView: View {
             } label: {
                 Image(systemName: "gearshape").font(.system(size: 13)).foregroundStyle(.secondary)
             }
-            .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().frame(width: 24, height: 26)
+            .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().frame(width: 28, height: 28)
             .accessibilityLabel("设置")
         }
+    }
+
+    private var opacityControls: some View {
+        HStack(spacing: 8) {
+            if controller.reduceTransparency {
+                Text("系统已开启「降低透明度」").foregroundStyle(.secondary)
+            } else {
+                Text("背景不透明度").foregroundStyle(.secondary)
+                Slider(value: Binding(get: { controller.pinnedBackdropOpacity }, set: controller.setPinnedBackdropOpacity),
+                       in: PinnedBackdrop.range)
+                    .controlSize(.small)
+                    .accessibilityLabel("固定面板背景不透明度")
+                Text("\(Int((controller.pinnedBackdropOpacity * 100).rounded()))%")
+                    .monospacedDigit().frame(width: 34, alignment: .trailing)
+            }
+        }.font(.system(size: 11)).frame(maxWidth: .infinity, alignment: .leading).padding(.vertical, 4)
     }
 
     private var progress: some View {
         TimelineView(.periodic(from: .now, by: 60)) { context in
             let summary = TaskDaySummary(items: repository.items, date: context.date)
-            VStack(spacing: 7) {
-                HStack {
-                    Text("今日待办完成").foregroundStyle(.secondary)
-                    Spacer()
-                    Text("\(summary.completed) / \(summary.total)").foregroundStyle(.secondary)
-                    Text("\(summary.percentage)%").foregroundStyle(DockStyle.accent).frame(minWidth: 30, alignment: .trailing)
-                }.font(.system(size: 10, weight: .medium)).monospacedDigit()
+            HStack(spacing: 8) {
+                Text("今日完成").foregroundStyle(.secondary)
+                Text("\(summary.completed)/\(summary.total)").monospacedDigit()
                 GeometryReader { proxy in
                     ZStack(alignment: .leading) {
-                        Capsule().fill(.primary.opacity(0.07))
-                        Capsule().fill(DockStyle.accent.opacity(0.8)).frame(width: proxy.size.width * summary.fraction)
+                        Capsule().fill(.primary.opacity(0.12))
+                        Capsule().fill(DockStyle.accent).frame(width: proxy.size.width * summary.fraction)
                     }
-                }.frame(height: 3)
-                .accessibilityLabel("今日完成 \(summary.completed) 项，共 \(summary.total) 项，\(summary.percentage)%")
+                }.frame(height: 3).accessibilityHidden(true)
+                Text("\(summary.percentage)%").monospacedDigit().foregroundStyle(.secondary).frame(minWidth: 30, alignment: .trailing)
             }
+            .font(.system(size: 11))
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel("今日完成 \(summary.completed) 项，共 \(summary.total) 项，\(summary.percentage)%")
             .help("统计今日到期、今日新建且无截止时间，以及今日完成的任务。")
         }
     }
 
     private var tabs: some View {
-        HStack(spacing: 2) {
+        Picker("任务页面", selection: $tab) {
             ForEach(DockTab.allCases) { item in
-                Button {
-                    composerFocused = false
-                    withAnimation(.easeInOut(duration: 0.16)) { tab = item }
-                } label: {
-                    Text(item.rawValue).font(.system(size: 12, weight: tab == item ? .semibold : .regular))
-                        .foregroundStyle(tab == item ? .primary : .secondary)
-                        .frame(maxWidth: .infinity).frame(height: 29)
-                        .background {
-                            if tab == item {
-                                RoundedRectangle(cornerRadius: 7).fill(.primary.opacity(0.075))
-                                    .matchedGeometryEffect(id: "selectedTab", in: tabHighlight)
-                            }
-                        }
-                }.buttonStyle(.plain).accessibilityLabel(item.rawValue)
-                    .accessibilityAddTraits(tab == item ? .isSelected : [])
-                    .disabled(controller.hasEditor)
+                Text(item.rawValue).tag(item)
             }
-        }.padding(3).background(.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 9))
+        }.pickerStyle(.segmented).labelsHidden().controlSize(.regular).tint(DockStyle.accent)
+            .onChange(of: tab) { _, _ in composerFocused = false }
+            .disabled(controller.hasEditor)
     }
 
     private var taskList: some View {
-        let items = repository.items.filter { $0.isCompleted == (tab == .completed) }.sorted {
-            tab == .completed ? ($0.completedAt ?? .distantPast) > ($1.completedAt ?? .distantPast) : false
-        }
+        let items = repository.items.filter { !$0.isCompleted }
         return Group {
             if items.isEmpty {
-                emptyState(symbol: tab == .completed ? "checkmark.circle" : "list.bullet",
-                           title: tab == .completed ? "还没有已完成任务" : "暂时没有待办",
-                           subtitle: tab == .completed ? "完成的任务会保留在这里。" : "在下方记下下一件事。")
+                emptyState(symbol: "list.bullet", title: "暂时没有待办", subtitle: "在下方记下下一件事。")
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 6) {
+                    LazyVStack(spacing: 0) {
+                        TaskRecommendationView(items: items, controller: controller, timer: controller.focusTimer)
                         ForEach(items) { item in TaskRowView(item: item, controller: controller) }
-                    }.padding(.horizontal, 16).padding(.vertical, 3)
+                    }.padding(.horizontal, DockStyle.inset)
                         .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
                 }.scrollIndicators(.visible).scrollBounceBehavior(.basedOnSize).id(tab)
             }
@@ -224,11 +250,11 @@ struct DockView: View {
                 emptyState(symbol: "square.grid.2x2", title: "给习惯留一个位置", subtitle: "在下方添加阅读、运动或其他习惯。")
             } else {
                 ScrollView(.vertical) {
-                    LazyVStack(spacing: 8) {
+                    LazyVStack(spacing: 0) {
                         ForEach(habits.habits) { habit in
                             HabitRowView(habit: habit, days: days, repository: habits, controller: controller)
                         }
-                    }.padding(.horizontal, 16).padding(.vertical, 3)
+                    }.padding(.horizontal, DockStyle.inset)
                         .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
                 }.scrollIndicators(.visible).scrollBounceBehavior(.basedOnSize)
             }
@@ -237,11 +263,11 @@ struct DockView: View {
 
     private var composer: some View {
         VStack(spacing: 0) {
-            Divider().opacity(0.5)
+            DockStyle.separator
             HStack(spacing: 9) {
                 Image(systemName: "plus").font(.system(size: 12)).foregroundStyle(.secondary)
                 TextField(tab == .habits ? "添加打卡习惯…" : "如：明天下午三点交报告…", text: tab == .habits ? $habitInput : $taskInput)
-                    .textFieldStyle(.plain).font(.system(size: 12)).focused($composerFocused)
+                    .textFieldStyle(.plain).font(.system(size: 13)).focused($composerFocused)
                     .onSubmit(addFromComposer)
                     .accessibilityLabel(tab == .habits ? "新增习惯名称" : "新增待办标题")
                 Button { composerFocused = false; controller.beginVoiceCapture() } label: { Image(systemName: "mic").font(.system(size: 13)) }
@@ -252,7 +278,7 @@ struct DockView: View {
                     Image(systemName: "arrow.up.circle.fill").font(.system(size: 20))
                         .foregroundStyle(DockStyle.accent)
                 }.buttonStyle(.plain).accessibilityLabel(tab == .habits ? "添加习惯" : "添加待办")
-            }.padding(.horizontal, 20).frame(height: 52)
+            }.padding(.horizontal, DockStyle.inset).frame(height: 48)
         }
     }
 

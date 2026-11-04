@@ -16,10 +16,10 @@ struct CompletionListView: View {
             }.frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
             ScrollView(.vertical) {
-                LazyVStack(alignment: .leading, spacing: 6) {
+                LazyVStack(alignment: .leading, spacing: 0) {
                     ForEach(groups.keys.sorted(by: >), id: \.self) { key in
-                        Text(dayTitle(key)).font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary)
-                            .padding(.top, 8).padding(.bottom, 3)
+                        Text(dayTitle(key)).font(.system(size: 11, weight: .medium)).foregroundStyle(.secondary)
+                            .padding(.top, 12).padding(.bottom, 4).accessibilityAddTraits(.isHeader)
                         ForEach(groups[key] ?? []) { entry in
                             switch entry.source {
                             case .task(let item): TaskRowView(item: item, controller: controller)
@@ -27,7 +27,7 @@ struct CompletionListView: View {
                             }
                         }
                     }
-                }.padding(.horizontal, 16).padding(.vertical, 3)
+                }.padding(.horizontal, DockStyle.inset)
                     .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
             }.scrollIndicators(.visible).scrollBounceBehavior(.basedOnSize)
         }
@@ -40,18 +40,19 @@ struct CompletionListView: View {
         HStack(alignment: .top, spacing: 10) {
             Button { controller.removeCheckIn(record) } label: {
                 Image(systemName: "checkmark.circle.fill").font(.system(size: 18, weight: .light))
-                    .foregroundStyle(DockStyle.accent.opacity(0.65)).frame(width: 22, height: 24)
+                    .foregroundStyle(DockStyle.accent).frame(width: 26, height: 26).contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityLabel("取消打卡：\(habit.name)，\(record.dayKey)")
             VStack(alignment: .leading, spacing: 5) {
-                Text(habit.name).font(.system(size: 12, weight: .medium)).foregroundStyle(.secondary)
+                Text(habit.name).font(.system(size: 13, weight: .medium)).foregroundStyle(.secondary)
                     .lineLimit(2).frame(maxWidth: .infinity, alignment: .leading)
-                Text("打卡 · \(record.dayKey)").font(.system(size: 9)).foregroundStyle(.tertiary)
+                Text("打卡 · \(record.dayKey)").font(.system(size: 11)).foregroundStyle(.secondary)
             }.padding(.top, 3)
             Button { controller.removeCheckIn(record) } label: {
-                Image(systemName: "trash").font(.system(size: 11)).foregroundStyle(.tertiary).frame(width: 22, height: 24)
+                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(.secondary)
+                    .frame(width: 24, height: 26).contentShape(Rectangle())
             }.buttonStyle(.plain).accessibilityLabel("删除本次打卡：\(habit.name)，\(record.dayKey)")
-        }.padding(.horizontal, 10).padding(.vertical, 9)
-            .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 9))
+        }.padding(.horizontal, 4).padding(.vertical, 8)
+            .overlay(alignment: .bottom) { DockStyle.separator }
     }
 }
 
@@ -59,10 +60,11 @@ struct NotificationControl: View {
     @ObservedObject var reminders: NativeReminderService
     @ObservedObject var controller: PanelWindowController
     @State private var presented = false
+    @Environment(\.colorScheme) private var scheme
     var body: some View {
         Button { presented.toggle() } label: {
             Image(systemName: reminders.isAuthorized ? "bell.badge" : "bell.slash")
-                .font(.system(size: 12)).foregroundStyle(reminders.isDenied ? Color.orange.opacity(0.85) : .secondary)
+                .font(.system(size: 12)).foregroundStyle(reminders.isDenied ? DockStyle.deadlineColor(in: scheme) : Color.secondary)
                 .frame(width: 28, height: 28).contentShape(Rectangle())
         }.buttonStyle(.plain).help(reminders.status)
             .accessibilityLabel("系统提醒：\(reminders.status)")

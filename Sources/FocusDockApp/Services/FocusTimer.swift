@@ -25,6 +25,13 @@ import FocusDockCore
         if value.pausedRemaining == nil { value.pause(at: .now) } else { value.resume(at: .now) }
         session = value; now = .now; persist()
     }
+    func setResumeNote(_ note: String, taskID: UUID) {
+        guard var value = session, value.taskID == taskID, value.pausedRemaining != nil else { return }
+        value.setResumeNote(note)
+        guard value != session else { return }
+        session = value
+        persist()
+    }
     func restore(_ value: FocusSession) { session = value; now = .now; finished = value.isFinished(at: now); persist() }
     func stop() { session = nil; finished = false; persist() }
     private func persist() {

@@ -10,11 +10,12 @@ public struct PanelInteraction {
     public private(set) var isEditing = false
     public private(set) var isDragging = false
     public private(set) var isMenuTracking = false
+    public private(set) var isQuiet = false
     private var requiresPointerExit = false
 
     public enum Event {
-        case enter, leave, hoverElapsed, collapseElapsed, click, reveal, collapse
-        case editing(Bool), dragging(Bool), menuTracking(Bool)
+        case enter, leave, hoverElapsed, collapseElapsed, click, openUnpinned, reveal, collapse
+        case editing(Bool), dragging(Bool), menuTracking(Bool), quietMode(Bool)
     }
     public enum Effect: Equatable { case none, cancelTimers, scheduleOpen, scheduleClose }
     public init() {}
@@ -23,13 +24,13 @@ public struct PanelInteraction {
         switch event {
         case .enter:
             isInside = true
-            return isExpanded || isDragging || isMenuTracking || requiresPointerExit ? .cancelTimers : .scheduleOpen
+            return canHoverOpen ? .scheduleOpen : .cancelTimers
         case .leave:
             isInside = false
             requiresPointerExit = false
             return canCollapse ? .scheduleClose : .cancelTimers
         case .hoverElapsed:
-            if isInside && !isDragging && !isMenuTracking && !requiresPointerExit { isExpanded = true }
+            if isInside && canHoverOpen { isExpanded = true }
         case .collapseElapsed:
             if canCollapse && !isInside { isExpanded = false }
         case .click:
@@ -37,6 +38,10 @@ public struct PanelInteraction {
             isExpanded = true
             isPinned.toggle()
             return !isPinned && !isInside && canCollapse ? .scheduleClose : .cancelTimers
+        case .openUnpinned:
+            requiresPointerExit = false
+            isExpanded = true
+            return !isInside && canCollapse ? .scheduleClose : .cancelTimers
         case .reveal:
             requiresPointerExit = false
             isExpanded = true
@@ -57,11 +62,16 @@ public struct PanelInteraction {
             return !value && !isInside && canCollapse ? .scheduleClose : .cancelTimers
         case let .menuTracking(value):
             isMenuTracking = value
-            if !value && isInside && !isExpanded && !isDragging && !requiresPointerExit { return .scheduleOpen }
+            if isInside && canHoverOpen { return .scheduleOpen }
             return !value && !isInside && canCollapse ? .scheduleClose : .cancelTimers
+        case let .quietMode(value):
+            isQuiet = value
+            if isInside && canHoverOpen { return .scheduleOpen }
+            return !isInside && canCollapse ? .scheduleClose : .cancelTimers
         }
         return .none
     }
 
     private var canCollapse: Bool { isExpanded && !isPinned && !isEditing && !isDragging && !isMenuTracking }
+    private var canHoverOpen: Bool { !isExpanded && !isQuiet && !isDragging && !isMenuTracking && !requiresPointerExit }
 }

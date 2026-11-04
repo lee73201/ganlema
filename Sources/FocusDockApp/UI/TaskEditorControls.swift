@@ -10,24 +10,19 @@ struct EditorTitleFields: View {
     var onClose: (() -> Void)?
     @FocusState private var focused: Bool
     var body: some View {
-        HStack(alignment: .top, spacing: 11) {
-            Image(systemName: "calendar.badge.plus")
-                .font(.system(size: 17, weight: .regular)).foregroundStyle(DockStyle.accent)
-                .frame(width: 35, height: 35)
-                .background(DockStyle.accent.opacity(0.10), in: RoundedRectangle(cornerRadius: 10))
+        HStack(alignment: .top, spacing: 8) {
             VStack(alignment: .leading, spacing: 7) {
                 TextField("任务名称", text: $draft.title, axis: .vertical)
                     .textFieldStyle(.plain).font(.system(size: 16, weight: .semibold))
                     .lineLimit(1...3).focused($focused).accessibilityLabel(accessibilityTitle)
                 TextField("添加描述（可选）", text: $draft.notes, axis: .vertical)
-                    .textFieldStyle(.plain).font(.system(size: 11)).foregroundStyle(.secondary)
+                    .textFieldStyle(.plain).font(.system(size: 12)).foregroundStyle(.secondary)
                     .lineLimit(1...3).accessibilityLabel("待办备注")
             }.padding(.top, 2).frame(maxWidth: .infinity, alignment: .leading)
             if let onClose {
                 Button(action: onClose) {
                     Image(systemName: "xmark").font(.system(size: 10, weight: .medium))
-                        .foregroundStyle(.secondary).frame(width: 25, height: 25)
-                        .background(.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 8))
+                        .foregroundStyle(.secondary).frame(width: 28, height: 28).contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel("关闭编辑")
             }
         }.onAppear { if focusOnAppear { focused = true } }
@@ -38,9 +33,8 @@ struct EditorSection<Content: View>: View {
     let content: Content
     init(@ViewBuilder content: () -> Content) { self.content = content() }
     var body: some View {
-        content.padding(12).frame(maxWidth: .infinity, alignment: .leading)
-            .background(.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(.primary.opacity(0.045), lineWidth: 0.5))
+        content.padding(.vertical, 10).frame(maxWidth: .infinity, alignment: .leading)
+            .overlay(alignment: .bottom) { DockStyle.separator }
     }
 }
 
@@ -253,28 +247,16 @@ struct EditorFooter: View {
     let save: () -> Void
     var body: some View {
         VStack(spacing: 12) {
-            Divider().opacity(0.45)
-            HStack(spacing: 10) {
-                Button("取消", action: cancel).buttonStyle(EditorActionStyle(primary: false)).keyboardShortcut(.cancelAction)
-                Button(saveTitle, action: save).buttonStyle(EditorActionStyle(primary: true)).disabled(!enabled)
+            DockStyle.separator
+            HStack(spacing: 8) {
+                Spacer()
+                Button("取消", action: cancel).buttonStyle(.bordered).keyboardShortcut(.cancelAction)
+                Button(saveTitle, action: save).buttonStyle(.borderedProminent).disabled(!enabled)
                     .keyboardShortcut("s", modifiers: .command)
-            }
+            }.controlSize(.regular)
         }.padding(.top, 8).padding(.bottom, 14)
     }
 }
-private struct EditorActionStyle: ButtonStyle {
-    let primary: Bool
-    @Environment(\.isEnabled) private var enabled
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label.font(.system(size: 12, weight: .semibold))
-            .frame(maxWidth: .infinity).frame(height: 34)
-            .foregroundStyle(primary ? Color.white : Color.primary.opacity(0.8))
-            .background(primary ? DockStyle.accent : Color.primary.opacity(0.035), in: RoundedRectangle(cornerRadius: 10))
-            .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.primary.opacity(primary ? 0 : 0.07), lineWidth: 0.5))
-            .opacity((enabled ? 1 : 0.45) * (configuration.isPressed ? 0.8 : 1))
-    }
-}
-
 private final class EditorDatePicker: NSDatePicker {
     override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
 }

@@ -46,22 +46,50 @@ struct CapsuleAppearanceView: View {
 
 struct FocusTimerBar: View {
     @ObservedObject var timer: FocusTimer
+    let controller: PanelWindowController
+    @FocusState private var noteFocused: Bool
+
     var body: some View {
         if let session = timer.session {
-            HStack(spacing: 8) {
-                Image(systemName: timer.finished ? "checkmark.circle" : "timer").foregroundStyle(DockStyle.accent)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(timer.finished ? "本次专注完成" : session.taskTitle).font(.system(size: 11, weight: .medium)).lineLimit(1)
-                    if timer.finished { Text("任务仍保留待办，可自行标记完成").font(.system(size: 9)).foregroundStyle(.secondary) }
-                }.frame(maxWidth: .infinity, alignment: .leading)
-                let seconds = Int(ceil(session.remaining(at: timer.now)))
-                Text(String(format: "%02d:%02d", seconds / 60, seconds % 60)).font(.system(size: 13, weight: .medium, design: .monospaced))
-                if !timer.finished {
-                    Button { timer.togglePause() } label: { Image(systemName: session.pausedRemaining == nil ? "pause.fill" : "play.fill") }
-                        .help(session.pausedRemaining == nil ? "暂停专注" : "继续专注").accessibilityLabel(session.pausedRemaining == nil ? "暂停专注" : "继续专注")
+            VStack(alignment: .leading, spacing: 6) {
+                controls(session)
+                if session.pausedRemaining != nil {
+                    TextField("从这里继续…", text: Binding(
+                        get: { timer.session?.resumeNote ?? "" },
+                        set: { timer.setResumeNote($0, taskID: session.taskID) }
+                    ))
+                    .font(.system(size: 11))
+                    .focused($noteFocused)
+                    .accessibilityLabel("续做备注")
+                    .help("自动保存，最多 \(FocusSession.resumeNoteLimit) 字")
+                    .onSubmit { noteFocused = false }
+                    .onDisappear { noteFocused = false; controller.setFocusNoteFocused(false) }
+                } else if !timer.finished, let note = session.resumeNote {
+                    Text("从这里继续：\(note)")
+                        .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
                 }
-                Button { timer.stop() } label: { Image(systemName: "xmark") }.help("结束专注").accessibilityLabel("结束专注")
-            }.buttonStyle(.plain).padding(10).background(DockStyle.accent.opacity(0.1), in: RoundedRectangle(cornerRadius: 9)).padding(.horizontal, 16).padding(.bottom, 8)
+            }
+            .buttonStyle(.plain).padding(.horizontal, 4).padding(.bottom, 8)
+            .overlay(alignment: .bottom) { DockStyle.separator }
+            .padding(.horizontal, DockStyle.inset).padding(.bottom, 8)
+            .onChange(of: noteFocused) { _, focused in controller.setFocusNoteFocused(focused) }
+        }
+    }
+
+    private func controls(_ session: FocusSession) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: timer.finished ? "checkmark.circle" : "timer").foregroundStyle(DockStyle.accent)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(timer.finished ? "本次专注完成" : session.taskTitle).font(.system(size: 11, weight: .medium)).lineLimit(1)
+                if timer.finished { Text("任务仍保留待办，可自行标记完成").font(.system(size: 9)).foregroundStyle(.secondary) }
+            }.frame(maxWidth: .infinity, alignment: .leading)
+            let seconds = Int(ceil(session.remaining(at: timer.now)))
+            Text(String(format: "%02d:%02d", seconds / 60, seconds % 60)).font(.system(size: 13, weight: .medium, design: .monospaced))
+            if !timer.finished {
+                Button { timer.togglePause() } label: { Image(systemName: session.pausedRemaining == nil ? "pause.fill" : "play.fill") }
+                    .help(session.pausedRemaining == nil ? "暂停专注" : "继续专注").accessibilityLabel(session.pausedRemaining == nil ? "暂停专注" : "继续专注")
+            }
+            Button { timer.stop() } label: { Image(systemName: "xmark") }.help("结束专注").accessibilityLabel("结束专注")
         }
     }
 }
@@ -74,7 +102,13 @@ struct LiveCapsuleView: View {
     @Environment(\.colorScheme) private var systemScheme
     var body: some View {
         let appearance = controller.floatingAppearance
-        if let session = timer.session {
+        if controller.interaction.isQuiet {
+            Image(systemName: "moon.fill")
+                .font(.system(size: appearance.shape == .strip ? 10 : 16))
+                .foregroundStyle(appearance.accentColor)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .accessibilityHidden(true)
+        } else if let session = timer.session {
             let compact = appearance.shape == .circle || appearance.shape == .strip
             HStack(spacing: compact ? 3 : 7) {
                 if appearance.shape != .circle {

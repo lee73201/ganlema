@@ -88,6 +88,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     }
     let deletionUndo = DeletionUndo()
     let focusTimer: FocusTimer
+    @Published private(set) var taskEstimates: TaskEstimates
+    @Published private(set) var pinnedBackdropOpacity: Double
+    @Published private(set) var reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
     private var settingsWindow: NSWindow?
     private var pointerTimer: AnyCancellable?
     private var globalMouseMonitor: Any?
@@ -121,22 +124,27 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     private var nativeResizeActive = false
     private var composerFocused = false
     private var notificationGuidePresented = false
+    private var focusNoteFocused = false
     private var quickEditors = Set<UUID>()
     private var materialView: PanelMaterialView<DockView>?
     private var pendingUrgency = DeadlineUrgency.normal
     private var subscriptions = Set<AnyCancellable>()
     private var wakeObserver: NSObjectProtocol?
+    private var displayOptionsObserver: NSObjectProtocol?
     private let defaults: UserDefaults
 
     init(repository: TaskRepository, habits: HabitRepository, defaults: UserDefaults = .standard) {
         self.repository = repository
         self.habits = habits
         self.defaults = defaults
+        taskEstimates = TaskEstimates(defaults: defaults, existingIDs: Set(repository.items.map(\.id)))
+        pinnedBackdropOpacity = PinnedBackdrop.normalized(defaults.object(forKey: "pinnedBackdropOpacity.v1") as? Double ?? PinnedBackdrop.defaultOpacity)
         floatingAppearance = FloatingAppearance.load(from: defaults)
         focusTimer = FocusTimer(defaults: defaults)
         deadlineGrowthEnabled = defaults.object(forKey: "deadlineGrowthEnabled") as? Bool ?? true
         theme = AppTheme(rawValue: defaults.string(forKey: "theme") ?? "system") ?? .system
         super.init(window: nil)
+        interaction.handle(.quietMode(defaults.bool(forKey: "quietCapsule.v1")))
         let panel = FloatingPanel(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: false)
         panel.title = "干了吗"
         panel.identifier = NSUserInterfaceItemIdentifier("FocusDock.panel")
@@ -207,6 +215,13 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
                 if let self { self.reminders.update(items: self.repository.items) }
             }
         }
+        displayOptionsObserver = NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.accessibilityDisplayOptionsDidChangeNotification, object: nil, queue: .main) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                self.reduceTransparency = NSWorkspace.shared.accessibilityDisplayShouldReduceTransparency
+                self.refreshExpandedBackdrop()
+            }
+        }
         reminders.onOpen = { [weak self] id in
             self?.reveal()
             if let item = self?.repository.items.first(where: { $0.id == id && !$0.isCompleted }) { self?.beginEditing(item) }
@@ -223,13 +238,26 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         if let screenObserver { NotificationCenter.default.removeObserver(screenObserver) }
         menuObservers.forEach { NotificationCenter.default.removeObserver($0) }
         if let wakeObserver { NSWorkspace.shared.notificationCenter.removeObserver(wakeObserver) }
+        if let displayOptionsObserver { NSWorkspace.shared.notificationCenter.removeObserver(displayOptionsObserver) }
     }
 
     func showDock() { window?.orderFrontRegardless() }
     func reveal() { send(.reveal); window?.makeKeyAndOrderFront(nil) }
     func togglePin() {
-        if !interaction.isExpanded && !floatingAppearance.clickToPin { send(.enter); send(.hoverElapsed); window?.makeKeyAndOrderFront(nil); return }
+        if !interaction.isExpanded && !floatingAppearance.clickToPin {
+            send(.openUnpinned)
+            window?.makeKeyAndOrderFront(nil)
+            return
+        }
         send(.click); if interaction.isPinned { window?.makeKeyAndOrderFront(nil) }
+    }
+    var canToggleQuietMode: Bool { interaction.isQuiet || (!interaction.isEditing && !interaction.isDragging) }
+    func toggleQuietMode() {
+        guard canToggleQuietMode else { return }
+        let enabled = !interaction.isQuiet
+        defaults.set(enabled, forKey: "quietCapsule.v1")
+        send(.quietMode(enabled))
+        if enabled { collapse() }
     }
     func escape() { if hasEditor { endEditing() } else { collapse() } }
     func collapse() {
@@ -241,6 +269,7 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
 
     private func send(_ event: PanelInteraction.Event) {
         let wasExpanded = interaction.isExpanded
+        let wasPinned = interaction.isPinned
         let effect = interaction.handle(event)
         switch effect {
         case .cancelTimers: cancelTimers()
@@ -266,6 +295,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
                 expandsDown = frame.midY >= screen.visibleFrame.midY
             }
             applyFrame(animated: true)
+        } else if wasPinned != interaction.isPinned {
+            refreshExpandedBackdrop()
         }
         applyPendingUrgency()
         if ProcessInfo.processInfo.environment["FOCUSDOCK_DEBUG_INTERACTION"] == "1" {
@@ -323,7 +354,12 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     func setComposerFocused(_ focused: Bool) { composerFocused = focused; syncEditingState() }
     func setQuickEditing(_ id: UUID, active: Bool) { if active { quickEditors.insert(id) } else { quickEditors.remove(id) }; syncEditingState() }
     func setNotificationGuidePresented(_ value: Bool) { notificationGuidePresented = value; syncEditingState() }
-    private func syncEditingState() { send(.editing(hasEditor || composerFocused || !quickEditors.isEmpty || notificationGuidePresented)) }
+    func setFocusNoteFocused(_ value: Bool) {
+        guard focusNoteFocused != value else { return }
+        focusNoteFocused = value
+        syncEditingState()
+    }
+    private func syncEditingState() { send(.editing(hasEditor || composerFocused || !quickEditors.isEmpty || notificationGuidePresented || focusNoteFocused)) }
     func beginEditingHabit(_ habit: Habit) {
         editor = nil
         editingHabit = habit
@@ -394,6 +430,28 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         } catch { errorMessage = error.localizedDescription }
     }
     func startFocus(_ item: TodoItem, minutes: Int) { focusTimer.start(item, minutes: minutes) }
+    func startRecommendedFocus(_ item: TodoItem, minutes: Int) {
+        guard focusTimer.session == nil || focusTimer.finished,
+              let current = repository.items.first(where: { $0.id == item.id && !$0.isCompleted }) else { return }
+        startFocus(current, minutes: minutes)
+    }
+    func setTaskEstimate(_ minutes: Int?, for item: TodoItem) {
+        guard repository.items.contains(where: { $0.id == item.id }) else { return }
+        taskEstimates.set(minutes, for: item.id, defaults: defaults)
+    }
+    func setPinnedBackdropOpacity(_ value: Double) {
+        let opacity = (PinnedBackdrop.normalized(value) * 100).rounded() / 100
+        guard pinnedBackdropOpacity != opacity else { return }
+        pinnedBackdropOpacity = opacity
+        defaults.set(opacity, forKey: "pinnedBackdropOpacity.v1")
+        refreshExpandedBackdrop()
+    }
+    private var expandedBackdropOpacity: Double {
+        PinnedBackdrop.opacity(pinned: interaction.isPinned, preference: pinnedBackdropOpacity, reduceTransparency: reduceTransparency)
+    }
+    private func refreshExpandedBackdrop() {
+        if interaction.isExpanded { materialView?.setExpandedBackdropOpacity(expandedBackdropOpacity) }
+    }
     func openAppearanceSettings() {
         if let settingsWindow { settingsWindow.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
         let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 520, height: 740), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
@@ -562,12 +620,15 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
                 context.duration = 0.16
                 window.animator().setFrame(target, display: true)
             } completionHandler: { [weak self] in Task { @MainActor in
-                guard let self else { return }; self.materialView?.configure(expanded: self.interaction.isExpanded, appearance: self.floatingAppearance)
+                self?.configureMaterial()
             } }
         } else { window.setFrame(target, display: true) }
-        materialView?.configure(expanded: interaction.isExpanded, appearance: floatingAppearance)
+        configureMaterial()
         window.invalidateShadow()
         applyingFrame = false
+    }
+    private func configureMaterial() {
+        materialView?.configure(expanded: interaction.isExpanded, appearance: floatingAppearance, expandedOpacity: expandedBackdropOpacity)
     }
     func shutdown() { voiceStartTask?.cancel(); speech.cancel(); savePosition() }
     func savePosition() {

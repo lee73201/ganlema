@@ -65,7 +65,7 @@ struct AppearanceSettingsView: View {
                             slider("绿色分量", value: settings.green, range: 0...1, text: "\(Int(controller.floatingAppearance.green * 255))")
                             slider("蓝色分量", value: settings.blue, range: 0...1, text: "\(Int(controller.floatingAppearance.blue * 255))")
                         }
-                        slider("背景不透明度", value: settings.opacity, range: 0.15...1, text: "\(Int(controller.floatingAppearance.opacity * 100))%")
+                        slider("胶囊不透明度", value: settings.opacity, range: 0.15...1, text: "\(Int(controller.floatingAppearance.opacity * 100))%")
                         if controller.floatingAppearance.shape == .rectangle { slider("圆角", value: settings.cornerRadius, range: 4...24, text: "\(Int(controller.floatingAppearance.cornerRadius)) pt") }
                         row("阴影") { Picker("阴影", selection: settings.shadow) { ForEach(CapsuleShadow.allCases, id: \.self) { Text($0.title).tag($0) } }.pickerStyle(.segmented) }
                         row("显示内容") { Picker("显示内容", selection: settings.content) { ForEach(CapsuleContent.allCases, id: \.self) { Text($0.title).tag($0) } } }

@@ -9,25 +9,26 @@ struct HabitRowView: View {
     private let weekdays = ["一", "二", "三", "四", "五", "六", "日"]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 11) {
+        VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
                 Button { controller.beginEditingHabit(habit) } label: {
-                    Text(habit.name).font(.system(size: 12, weight: .medium)).lineLimit(1)
+                    Text(habit.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }.buttonStyle(.plain).accessibilityLabel("编辑习惯：\(habit.name)")
                 TimelineView(.periodic(from: .now, by: 60)) { context in
                     let streak = repository.streak(for: habit, asOf: context.date)
-                    if streak > 0 { Text("连续 \(streak) 天").font(.system(size: 9)).foregroundStyle(.secondary) }
+                    if streak > 0 { Text("连续 \(streak) 天").font(.system(size: 11)).foregroundStyle(.secondary) }
                 }
                 Button { controller.deleteHabit(habit) } label: {
-                    Image(systemName: "trash").font(.system(size: 11)).foregroundStyle(.tertiary)
+                    Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(.secondary)
+                        .frame(width: 24, height: 26).contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel("删除习惯：\(habit.name)")
             }
             HStack(spacing: 5) {
                 ForEach(Array(days.enumerated()), id: \.element) { index, date in
                     let checked = repository.isChecked(habit, on: date)
                     VStack(spacing: 5) {
-                        Text(weekdays[index]).font(.system(size: 9)).foregroundStyle(.secondary.opacity(0.7))
+                        Text(weekdays[index]).font(.system(size: 11)).foregroundStyle(.secondary)
                         Button { controller.toggleHabit(habit, date: date) } label: {
                             ZStack {
                                 RoundedRectangle(cornerRadius: 6).fill(checked ? DockStyle.accent.opacity(0.8) : .primary.opacity(0.045))
@@ -43,7 +44,8 @@ struct HabitRowView: View {
                     }.frame(maxWidth: .infinity)
                 }
             }
-        }.padding(11).background(.primary.opacity(0.03), in: RoundedRectangle(cornerRadius: 9))
+        }.padding(.horizontal, 4).padding(.vertical, 12)
+            .overlay(alignment: .bottom) { DockStyle.separator }
     }
 }
 

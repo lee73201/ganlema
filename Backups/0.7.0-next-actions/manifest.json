@@ -1,0 +1,9 @@
+{
+  "version": "0.7.0",
+  "build": "12",
+  "architecture": "arm64",
+  "minimumMacOS": "14.0",
+  "sha256": {
+    "ganlema-0.7.0-build12-app.zip": "1fad001c562300d10a41cd56e5d339bdd1b4310fe680912240f77755f39aa649"
+  }
+}
