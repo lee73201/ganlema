@@ -50,8 +50,10 @@ struct DockView: View {
             if !pinned { opacityControlsVisible = false }
         }
         .onChange(of: composerFocused) { _, value in controller.setComposerFocused(value) }
-        .onChange(of: controller.captureSaved) { _, _ in taskInput = ""; tab = .tasks }
-        .alert("操作未完成", isPresented: Binding(get: { controller.errorMessage != nil }, set: { if !$0 { controller.errorMessage = nil } })) {
+        .onChange(of: controller.captureSaved) { _, saved in
+            if saved?.host == .panel { taskInput = ""; tab = .tasks }
+        }
+        .alert("操作未完成", isPresented: Binding(get: { controller.errorMessage != nil && controller.workspaceWindow?.isKeyWindow != true }, set: { if !$0 { controller.errorMessage = nil } })) {
             Button("好", role: .cancel) { controller.errorMessage = nil }
         } message: { Text(controller.errorMessage ?? "") }
     }
@@ -68,7 +70,7 @@ struct DockView: View {
 
     private var expanded: some View {
         VStack(spacing: 0) {
-            if controller.editor != nil || controller.capture != nil {
+            if controller.hasPanelEditor && (controller.editor != nil || controller.capture != nil) {
                 Color.clear.frame(height: 16)
                     .overlay(DragRegion(controller: controller))
                     .help("拖动以移动编辑窗口")
@@ -80,18 +82,12 @@ struct DockView: View {
                     tabs
                 }.padding(.horizontal, DockStyle.inset).padding(.top, 14).padding(.bottom, 8)
             }
-            if !controller.hasEditor { FocusTimerBar(timer: controller.focusTimer, controller: controller) }
-            if let session = controller.capture {
-                TaskCaptureView(session: session, controller: controller).id(session.id)
-            } else if controller.voicePresented {
-                VoiceCaptureView(controller: controller, speech: controller.speech)
-            } else if let session = controller.editor {
-                TaskEditorView(session: session, controller: controller).id(session.id)
-            } else if let habit = controller.editingHabit {
-                HabitEditorView(habit: habit, controller: controller).id(habit.id)
+            if controller.hasPanelEditor {
+                EditingFlowView(controller: controller)
             } else {
+                FocusTimerBar(timer: controller.focusTimer, controller: controller)
                 Group {
-                    if tab == .habits { habitList }
+                    if tab == .habits { HabitListView(habits: habits, controller: controller, weekOffset: $weekOffset) }
                     else if tab == .completed { CompletionListView(repository: repository, habits: habits, controller: controller) }
                     else { taskList }
                 }
@@ -154,7 +150,8 @@ struct DockView: View {
                 Divider()
                 Toggle("DDL 临近时增大窗口", isOn: $controller.deadlineGrowthEnabled)
                 Button("启用系统提醒") { Task { await controller.reminders.enableOrOpenSettings() } }
-                Button("收起窗口", systemImage: "minus") { controller.collapse() }.disabled(controller.hasEditor)
+                Button("打开主窗口", systemImage: "macwindow") { controller.onShowWorkspace?() }
+                Button("收起窗口", systemImage: "minus") { controller.collapse() }.disabled(controller.hasPanelEditor)
                 Button("移到鼠标所在屏幕") { controller.moveToPointerScreen() }
                 Button("放大窗口") { controller.scaleWindow(1.15) }
                 Button("缩小窗口") { controller.scaleWindow(1 / 1.15) }
@@ -212,7 +209,7 @@ struct DockView: View {
             }
         }.pickerStyle(.segmented).labelsHidden().controlSize(.regular).tint(DockStyle.accent)
             .onChange(of: tab) { _, _ in composerFocused = false }
-            .disabled(controller.hasEditor)
+            .disabled(controller.hasPanelEditor)
     }
 
     private var taskList: some View {
@@ -228,35 +225,6 @@ struct DockView: View {
                     }.padding(.horizontal, DockStyle.inset)
                         .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
                 }.scrollIndicators(.visible).scrollBounceBehavior(.basedOnSize).id(tab)
-            }
-        }
-    }
-
-    private var habitList: some View {
-        let reference = Calendar.current.date(byAdding: .weekOfYear, value: weekOffset, to: .now) ?? .now
-        let days = HabitCalendar.week(containing: reference)
-        return VStack(spacing: 8) {
-            HStack(spacing: 9) {
-                Text(weekOffset == 0 ? "本周" : days[0].formatted(.dateTime.month().day()))
-                    .font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary)
-                Spacer()
-                if weekOffset != 0 { Button("本周") { weekOffset = 0 }.font(.system(size: 10)) }
-                Button { weekOffset -= 1 } label: { Image(systemName: "chevron.left") }
-                    .accessibilityLabel("上一周")
-                Button { weekOffset += 1 } label: { Image(systemName: "chevron.right") }
-                    .accessibilityLabel("下一周")
-            }.buttonStyle(.plain).font(.system(size: 10)).padding(.horizontal, 20).frame(height: 20)
-            if habits.habits.isEmpty {
-                emptyState(symbol: "square.grid.2x2", title: "给习惯留一个位置", subtitle: "在下方添加阅读、运动或其他习惯。")
-            } else {
-                ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
-                        ForEach(habits.habits) { habit in
-                            HabitRowView(habit: habit, days: days, repository: habits, controller: controller)
-                        }
-                    }.padding(.horizontal, DockStyle.inset)
-                        .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
-                }.scrollIndicators(.visible).scrollBounceBehavior(.basedOnSize)
             }
         }
     }

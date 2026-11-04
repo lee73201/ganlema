@@ -11,6 +11,7 @@ struct TaskRowView: View {
     @State private var quickDate: Date?
     @State private var hovered = false
     @Environment(\.colorScheme) private var scheme
+    @Environment(\.editorHost) private var editorHost
 
     var body: some View {
         VStack(spacing: 8) {
@@ -30,25 +31,19 @@ struct TaskRowView: View {
                                 title = item.title; editingTitle = false
                             }.frame(height: 20)
                         } else {
-                            Button { NSApp.activate(ignoringOtherApps: true); controller.window?.makeKeyAndOrderFront(nil); title = item.title; editingTitle = true } label: {
+                            Button {
+                                NSApp.activate(ignoringOtherApps: true)
+                                controller.editingWindow(for: editorHost)?.makeKeyAndOrderFront(nil)
+                                title = item.title
+                                editingTitle = true
+                            } label: {
                                 Text(item.title).font(.system(size: 13, weight: .medium))
                                     .foregroundStyle(item.isCompleted ? .secondary : .primary)
                                     .lineLimit(3).multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                             }.buttonStyle(.plain).accessibilityLabel("快速编辑标题：\(item.title)").help(item.title)
                         }
-                        Menu {
-                            Button("专注 25 分钟") { editingTitle = false; commitTitle(); controller.startFocus(item, minutes: 25) }
-                            Button("专注 50 分钟") { editingTitle = false; commitTitle(); controller.startFocus(item, minutes: 50) }
-                            Divider()
-                            Button("完整编辑") { commitTitle(); controller.beginEditing(item) }
-                        } label: { Image(systemName: "timer").font(.system(size: 12)).foregroundStyle(.secondary) }
-                            .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().frame(width: 24, height: 26)
-                            .disabled(item.isCompleted).accessibilityLabel("专注计时：\(item.title)")
-                        Button { controller.delete(item) } label: {
-                            Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(.secondary)
-                                .frame(width: 24, height: 26).contentShape(Rectangle())
-                        }.buttonStyle(.plain).accessibilityLabel("删除：\(item.title)")
+                        rowActions
                     }
                     metadata
                 }.frame(maxWidth: .infinity, alignment: .leading).padding(.top, 3)
@@ -78,14 +73,57 @@ struct TaskRowView: View {
         .onChange(of: item.title) { _, value in if !editingTitle { title = value } }
         .onChange(of: editingTitle) { _, active in
             if !active { commitTitle() }
-            controller.setQuickEditing(item.id, active: active || editingDate)
+            protectPanelEditing(active || editingDate)
         }
-        .onChange(of: editingDate) { _, active in controller.setQuickEditing(item.id, active: active || editingTitle) }
-        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification, object: controller.window)) { _ in
+        .onChange(of: editingDate) { _, active in protectPanelEditing(active || editingTitle) }
+        .onReceive(NotificationCenter.default.publisher(for: NSWindow.didResignKeyNotification, object: controller.editingWindow(for: editorHost))) { _ in
             if editingTitle { commitTitle(); editingTitle = false }
         }
-        .onDisappear { commitTitle(); controller.setQuickEditing(item.id, active: false) }
-        .contextMenu { Button("完整编辑") { commitTitle(); controller.beginEditing(item) } }
+        .onDisappear { commitTitle(); protectPanelEditing(false) }
+        .contextMenu { Button("完整编辑", action: openEditor) }
+        .disabled(controller.editor?.item?.id == item.id)
+    }
+
+    private func protectPanelEditing(_ active: Bool) {
+        if editorHost == .panel { controller.setQuickEditing(item.id, active: active) }
+    }
+
+    private func openEditor() {
+        commitTitle()
+        controller.beginEditing(item, in: editorHost)
+    }
+
+    private func startFocus(_ minutes: Int) {
+        commitTitle()
+        editingTitle = false
+        controller.startFocus(item, minutes: minutes)
+    }
+
+    @ViewBuilder private var rowActions: some View {
+        Menu {
+            if !item.isCompleted {
+                Button("专注 25 分钟") { startFocus(25) }
+                Button("专注 50 分钟") { startFocus(50) }
+                Divider()
+            }
+            Button("完整编辑", action: openEditor)
+            if editorHost == .workspace {
+                Divider()
+                Button("删除任务", role: .destructive) { controller.delete(item) }
+            }
+        } label: {
+            Image(systemName: editorHost == .workspace ? "ellipsis" : "timer")
+                .font(.system(size: 12)).foregroundStyle(.secondary)
+        }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize().frame(width: 24, height: 26)
+        .disabled(editorHost == .panel && item.isCompleted)
+        .accessibilityLabel(editorHost == .workspace ? "任务操作：\(item.title)" : "专注计时：\(item.title)")
+        if editorHost == .panel {
+            Button { controller.delete(item) } label: {
+                Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(.secondary)
+                    .frame(width: 24, height: 26).contentShape(Rectangle())
+            }.buttonStyle(.plain).accessibilityLabel("删除：\(item.title)")
+        }
     }
     private var estimateMenu: some View {
         let estimate = controller.taskEstimates[item.id]

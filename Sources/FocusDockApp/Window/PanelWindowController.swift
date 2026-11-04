@@ -28,6 +28,13 @@ struct TaskEditorSession: Identifiable {
     var draft: TaskDraft { item.map(TaskDraft.init(item:)) ?? TaskDraft() }
 }
 
+enum EditingHost { case panel, workspace }
+
+struct TaskCaptureSave: Equatable {
+    let id = UUID()
+    let host: EditingHost
+}
+
 final class FloatingPanel: NSPanel {
     override var canBecomeKey: Bool { true }
     override var canBecomeMain: Bool { false }
@@ -67,7 +74,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     @Published private(set) var editingHabit: Habit?
     @Published private(set) var capture: CaptureSession?
     @Published private(set) var voicePresented = false
-    @Published private(set) var captureSaved = UUID()
+    @Published private(set) var captureSaved: TaskCaptureSave?
+    @Published private(set) var editingHost: EditingHost?
     @Published private(set) var urgency = DeadlineUrgency.normal
     @Published var deadlineGrowthEnabled: Bool {
         didSet { defaults.set(deadlineGrowthEnabled, forKey: "deadlineGrowthEnabled"); updateUrgency() }
@@ -102,7 +110,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     private var capsuleWindowSize: NSSize { let size = floatingAppearance.size(urgency: urgency); return NSSize(width: size.width + 8, height: size.height + 8) }
     let speech = NativeSpeechService()
     let reminders = NativeReminderService()
-    var hasEditor: Bool { editor != nil || editingHabit != nil || capture != nil || voicePresented }
+    var hasPanelEditor: Bool { editingHost == .panel }
+    weak var workspaceWindow: NSWindow?
+    var onShowWorkspace: (() -> Void)?
     @Published var errorMessage: String?
     @Published var theme: AppTheme {
         didSet { defaults.set(theme.rawValue, forKey: "theme"); applyFrame() }
@@ -259,9 +269,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         send(.quietMode(enabled))
         if enabled { collapse() }
     }
-    func escape() { if hasEditor { endEditing() } else { collapse() } }
+    func escape() { if hasPanelEditor { endEditing() } else { collapse() } }
     func collapse() {
-        guard !hasEditor else { return }
+        guard !hasPanelEditor else { return }
         composerFocused = false
         syncEditingState()
         if interaction.isMenuTracking { collapseAfterMenu = true } else { send(.collapse) }
@@ -306,28 +316,51 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
 
     private func cancelTimers() { openTimer?.cancel(); closeTimer?.cancel(); openTimer = nil; closeTimer = nil }
 
-    func beginEditing(_ item: TodoItem? = nil) {
+    func editingWindow(for host: EditingHost) -> NSWindow? { host == .panel ? window : workspaceWindow }
+
+    private func bringEditorForward(in host: EditingHost) {
+        if host == .workspace { onShowWorkspace?() }
+        editingWindow(for: host)?.makeKeyAndOrderFront(nil)
+    }
+
+    private func claimEditor(in host: EditingHost, replacingVoice: Bool = false) -> Bool {
+        if let editingHost {
+            if replacingVoice && voicePresented && editingHost == host { return true }
+            bringEditorForward(in: editingHost)
+            return false
+        }
+        editingHost = host
+        return true
+    }
+
+    func beginEditing(_ item: TodoItem? = nil, in host: EditingHost = .panel) {
+        guard claimEditor(in: host) else { return }
         editor = TaskEditorSession(item: item)
-        editingHabit = nil
         syncEditingState()
-        window?.makeKeyAndOrderFront(nil)
+        bringEditorForward(in: host)
     }
     func endEditing() {
         editor = nil; editingHabit = nil; capture = nil; voicePresented = false
+        editingHost = nil
         voiceStartTask?.cancel(); voiceStartTask = nil
         speech.cancel()
         syncEditingState()
     }
-    func beginCapture(_ input: String) {
+    func beginCapture(_ input: String, in host: EditingHost = .panel) {
         let cards = LocalTaskParser().parse(input)
-        guard !cards.isEmpty else { return }
+        guard !cards.isEmpty, claimEditor(in: host, replacingVoice: true) else { return }
         speech.cancel(); voicePresented = false; editor = nil; editingHabit = nil
         capture = CaptureSession(input: input, cards: cards)
-        composerFocused = false; syncEditingState(); window?.makeKeyAndOrderFront(nil)
+        if host == .panel { composerFocused = false }
+        syncEditingState()
+        bringEditorForward(in: host)
     }
-    func beginVoiceCapture() {
-        editor = nil; editingHabit = nil; capture = nil; voicePresented = true
-        composerFocused = false; syncEditingState(); window?.makeKeyAndOrderFront(nil)
+    func beginVoiceCapture(in host: EditingHost = .panel) {
+        guard claimEditor(in: host) else { return }
+        voicePresented = true
+        if host == .panel { composerFocused = false }
+        syncEditingState()
+        bringEditorForward(in: host)
         voiceStartTask?.cancel()
         voiceStartTask = Task { [weak self] in
             guard let self, self.voicePresented, !Task.isCancelled else { return }
@@ -338,7 +371,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         do {
             try repository.addBatch(cards.map(\.draft))
             let wantsReminders = cards.contains { ($0.draft.dueDate.map { $0 > Date() } ?? false) && !$0.draft.reminderOffsets.isEmpty }
-            endEditing(); captureSaved = UUID()
+            let host = editingHost
+            endEditing()
+            if let host { captureSaved = TaskCaptureSave(host: host) }
             if wantsReminders { Task { [weak self] in await self?.reminders.enable() } }
         } catch { errorMessage = error.localizedDescription }
     }
@@ -359,12 +394,12 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
         focusNoteFocused = value
         syncEditingState()
     }
-    private func syncEditingState() { send(.editing(hasEditor || composerFocused || !quickEditors.isEmpty || notificationGuidePresented || focusNoteFocused)) }
-    func beginEditingHabit(_ habit: Habit) {
-        editor = nil
+    private func syncEditingState() { send(.editing(hasPanelEditor || composerFocused || !quickEditors.isEmpty || notificationGuidePresented || focusNoteFocused)) }
+    func beginEditingHabit(_ habit: Habit, in host: EditingHost = .panel) {
+        guard claimEditor(in: host) else { return }
         editingHabit = habit
         syncEditingState()
-        window?.makeKeyAndOrderFront(nil)
+        bringEditorForward(in: host)
     }
     func saveHabit(_ habit: Habit, name: String) {
         do { try habits.rename(habit, name: name); endEditing() }
@@ -401,8 +436,9 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     func save(_ draft: TaskDraft, item: TodoItem?) {
         do {
             if let item { try repository.update(item, with: draft) } else { try repository.add(draft) }
+            let host = editingHost
             endEditing()
-            if item == nil { captureSaved = UUID() }
+            if item == nil, let host { captureSaved = TaskCaptureSave(host: host) }
             if let due = draft.dueDate, due > .now, !draft.reminderOffsets.isEmpty { Task { [weak self] in await self?.reminders.enable() } }
         } catch { errorMessage = error.localizedDescription }
     }

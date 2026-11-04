@@ -14,6 +14,7 @@ struct FocusDockApp {
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     private var dock: PanelWindowController?
+    private var workspace: WorkspaceWindowController?
     private var statusItem: NSStatusItem?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -29,8 +30,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             let preferences = environment["FOCUSDOCK_PREFERENCES_SUITE"].flatMap { UserDefaults(suiteName: $0) } ?? .standard
             let controller = PanelWindowController(repository: repository, habits: habits, defaults: preferences)
             dock = controller
+            controller.onShowWorkspace = { [weak self] in self?.openWorkspace() }
             installMenu()
             controller.showDock()
+            openWorkspace()
         } catch {
             let alert = NSAlert()
             alert.messageText = "干了吗无法打开本地数据"
@@ -72,7 +75,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
 
     private func makeDockMenu() -> NSMenu {
         let menu = NSMenu(title: "干了吗")
-        menu.addItem(menuItem("打开干了吗", action: #selector(reveal), key: ""))
+        menu.addItem(menuItem("打开主窗口", action: #selector(openWorkspace), key: ""))
+        menu.addItem(menuItem("展开悬浮面板", action: #selector(reveal), key: ""))
+        menu.addItem(menuItem("关闭主窗口", action: #selector(closeWorkspace), key: "w"))
         menu.addItem(menuItem("安静胶囊", action: #selector(toggleQuietMode), key: ""))
         menu.addItem(menuItem("撤销上次删除", action: #selector(undoDeletion), key: ""))
         menu.addItem(menuItem("移到鼠标所在屏幕", action: #selector(moveToCurrentScreen), key: ""))
@@ -106,6 +111,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         return item
     }
     func validateMenuItem(_ menuItem: NSMenuItem) -> Bool {
+        if menuItem.action == #selector(closeWorkspace) { return workspace?.window?.isKeyWindow == true }
         if menuItem.action == #selector(toggleQuietMode) {
             menuItem.state = dock?.interaction.isQuiet == true ? .on : .off
             return dock?.canToggleQuietMode == true
@@ -117,6 +123,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         return true
     }
     @objc private func appearanceSettings() { dock?.openAppearanceSettings() }
+    @objc private func openWorkspace() {
+        guard let dock else { return }
+        if workspace == nil { workspace = WorkspaceWindowController(dock: dock) }
+        workspace?.present()
+    }
+    @objc private func closeWorkspace() { workspace?.window?.performClose(nil) }
     @objc private func undoDeletion() { dock?.undoDeletion() }
     @objc private func reveal() { dock?.reveal() }
     @objc private func toggleQuietMode() { dock?.toggleQuietMode() }
@@ -130,7 +142,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     }
     @objc private func quit() { NSApp.terminate(nil) }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        dock?.reveal()
+        openWorkspace()
         return false
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

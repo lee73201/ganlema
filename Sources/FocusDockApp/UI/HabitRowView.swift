@@ -6,12 +6,13 @@ struct HabitRowView: View {
     let days: [Date]
     @ObservedObject var repository: HabitRepository
     @ObservedObject var controller: PanelWindowController
+    @Environment(\.editorHost) private var editorHost
     private let weekdays = ["一", "二", "三", "四", "五", "六", "日"]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 8) {
-                Button { controller.beginEditingHabit(habit) } label: {
+                Button { controller.beginEditingHabit(habit, in: editorHost) } label: {
                     Text(habit.name).font(.system(size: 13, weight: .medium)).lineLimit(1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 }.buttonStyle(.plain).accessibilityLabel("编辑习惯：\(habit.name)")
@@ -23,6 +24,7 @@ struct HabitRowView: View {
                     Image(systemName: "trash").font(.system(size: 12)).foregroundStyle(.secondary)
                         .frame(width: 24, height: 26).contentShape(Rectangle())
                 }.buttonStyle(.plain).accessibilityLabel("删除习惯：\(habit.name)")
+                    .disabled(controller.editingHabit?.id == habit.id)
             }
             HStack(spacing: 5) {
                 ForEach(Array(days.enumerated()), id: \.element) { index, date in
@@ -77,4 +79,43 @@ struct HabitEditorView: View {
         }.padding(20).onAppear { focused = true }
     }
     private func save() { controller.saveHabit(habit, name: name) }
+}
+
+struct HabitListView: View {
+    @ObservedObject var habits: HabitRepository
+    @ObservedObject var controller: PanelWindowController
+    @Binding var weekOffset: Int
+
+    var body: some View {
+        let reference = Calendar.current.date(byAdding: .weekOfYear, value: weekOffset, to: .now) ?? .now
+        let days = HabitCalendar.week(containing: reference)
+        return VStack(spacing: 8) {
+            HStack(spacing: 9) {
+                Text(weekOffset == 0 ? "本周" : days[0].formatted(.dateTime.month().day()))
+                    .font(.system(size: 10, weight: .medium)).foregroundStyle(.secondary)
+                Spacer()
+                if weekOffset != 0 { Button("本周") { weekOffset = 0 }.font(.system(size: 10)) }
+                Button { weekOffset -= 1 } label: { Image(systemName: "chevron.left") }
+                    .accessibilityLabel("上一周")
+                Button { weekOffset += 1 } label: { Image(systemName: "chevron.right") }
+                    .accessibilityLabel("下一周")
+            }.buttonStyle(.plain).font(.system(size: 10)).padding(.horizontal, 20).frame(height: 20)
+            if habits.habits.isEmpty {
+                VStack(spacing: 8) {
+                    Image(systemName: "square.grid.2x2").font(.system(size: 20)).accessibilityHidden(true)
+                    Text("给习惯留一个位置").font(.system(size: 12, weight: .medium))
+                    Text("在下方添加阅读、运动或其他习惯。").font(.system(size: 11))
+                }.foregroundStyle(.secondary).frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                ScrollView(.vertical) {
+                    LazyVStack(spacing: 0) {
+                        ForEach(habits.habits) { habit in
+                            HabitRowView(habit: habit, days: days, repository: habits, controller: controller)
+                        }
+                    }.padding(.horizontal, DockStyle.inset)
+                        .background(OverlayScrollerStyle().frame(width: 0, height: 0).allowsHitTesting(false))
+                }.scrollIndicators(.visible).scrollBounceBehavior(.basedOnSize)
+            }
+        }
+    }
 }

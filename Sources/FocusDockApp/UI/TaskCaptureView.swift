@@ -57,6 +57,7 @@ struct VoiceCaptureView: View {
     @ObservedObject var controller: PanelWindowController
     @ObservedObject var speech: NativeSpeechService
     @State private var text = ""
+    @Environment(\.editorHost) private var editorHost
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -78,7 +79,7 @@ struct VoiceCaptureView: View {
                     Button("重新录音") { Task { try? await speech.start() } }.buttonStyle(.bordered)
                 }
                 Spacer()
-                Button(speech.state == .finishing ? "用当前文字解析" : "解析待办") { controller.beginCapture(text) }.buttonStyle(.borderedProminent)
+                Button(speech.state == .finishing ? "用当前文字解析" : "解析待办") { controller.beginCapture(text, in: editorHost) }.buttonStyle(.borderedProminent)
                     .disabled(speech.state == .requesting || speech.state == .listening || text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
         }.padding(.horizontal, 20).padding(.bottom, 14)

@@ -48,6 +48,7 @@ struct FocusTimerBar: View {
     @ObservedObject var timer: FocusTimer
     let controller: PanelWindowController
     @FocusState private var noteFocused: Bool
+    @Environment(\.editorHost) private var editorHost
 
     var body: some View {
         if let session = timer.session {
@@ -63,7 +64,7 @@ struct FocusTimerBar: View {
                     .accessibilityLabel("续做备注")
                     .help("自动保存，最多 \(FocusSession.resumeNoteLimit) 字")
                     .onSubmit { noteFocused = false }
-                    .onDisappear { noteFocused = false; controller.setFocusNoteFocused(false) }
+                    .onDisappear { noteFocused = false; updateNoteFocus(false) }
                 } else if !timer.finished, let note = session.resumeNote {
                     Text("从这里继续：\(note)")
                         .font(.system(size: 11)).foregroundStyle(.secondary).lineLimit(2)
@@ -72,8 +73,12 @@ struct FocusTimerBar: View {
             .buttonStyle(.plain).padding(.horizontal, 4).padding(.bottom, 8)
             .overlay(alignment: .bottom) { DockStyle.separator }
             .padding(.horizontal, DockStyle.inset).padding(.bottom, 8)
-            .onChange(of: noteFocused) { _, focused in controller.setFocusNoteFocused(focused) }
+            .onChange(of: noteFocused) { _, focused in updateNoteFocus(focused) }
         }
+    }
+
+    private func updateNoteFocus(_ value: Bool) {
+        if editorHost == .panel { controller.setFocusNoteFocused(value) }
     }
 
     private func controls(_ session: FocusSession) -> some View {

@@ -4,19 +4,23 @@
 
 # 干了吗
 
-**悬在桌面上的 Mac 待办。鼠标移过去，就知道下一件要做什么。**
+**打开主窗口整理任务，工作时用桌面胶囊瞄一眼。**
 
 说一句「明天下午三点交报告」，核对任务和截止时间后保存。需要专注时，从任务旁启动 25 或 50 分钟计时。面板收起后，剩余时间还看得见。
 
-[**下载干了吗 0.7.0**](https://raw.githubusercontent.com/lee73201/ganlema/main/Backups/0.7.0-next-actions/ganlema-0.7.0-build12-app.zip) · macOS 14 或更新版本 · 此下载包适用于 Apple 芯片 Mac
+[**下载干了吗 0.8.0**](https://raw.githubusercontent.com/lee73201/ganlema/main/Backups/0.8.0-workspace/ganlema-0.8.0-build13-app.zip) · macOS 14 或更新版本 · 此下载包适用于 Apple 芯片 Mac
 
 ## 安装与打开
 
 1. 下载并解压 ZIP，将「干了吗.app」拖入「应用程序」，然后双击打开。
-2. 在桌面找悬浮胶囊，或点击屏幕顶部菜单栏的勾号，选择「打开干了吗」。
+2. 双击应用会打开主窗口，默认进入「今天」。也可以从菜单栏勾号选择「打开主窗口」或「展开悬浮面板」。
 3. 若 macOS 因无法验证开发者而阻止打开，此构建使用临时签名，未经过 Apple 公证。仅在确认来源为本仓库后，可前往「系统设置 → 隐私与安全性」，在对应提示下选择「仍要打开」（如果系统提供该选项）。
 
 ## 怎么用
+
+主窗口的左侧有「今天」「全部待办」「已完成」和「打卡」。在「今天」可以查看今日进度、最近截止、已逾期和今天到期的任务。没有截止时间但今天新增的任务也单独列出。点右上角放大镜可搜索标题、备注或类别。
+
+主窗口和悬浮面板共享任务、习惯和专注状态。点红色关闭按钮或按 `⌘W` 关闭主窗口后，胶囊仍可使用。要退出整个应用，选择菜单栏的「退出干了吗」。
 
 | 想做什么 | 怎么操作 |
 | --- | --- |
@@ -57,7 +61,7 @@ bash scripts/build-app.sh
 open "build/干了吗.app"
 ```
 
-也可以打开 `FocusDock.xcodeproj`，选择 `FocusDock` scheme 运行或测试。源码中的图标矢量稿位于 [Resources/AppIcon.svg](Resources/AppIcon.svg)，应用使用 [AppIcon.icns](Resources/AppIcon.icns)。
+也可以打开 `FocusDock.xcodeproj`，选择 `FocusDock` scheme 运行或测试。透明底图标源文件位于 [Resources/AppIcon.png](Resources/AppIcon.png)，应用使用 [AppIcon.icns](Resources/AppIcon.icns)。
 
 - 本机数据库位于 `~/Library/Application Support/FocusDock/`。升级时沿用原应用标识和数据路径，迁移细节见 [MIGRATION.md](MIGRATION.md)。
-- [历史版本备份](Backups)与[本次验证记录](VALIDATION-0.7.0.md)保留在仓库中。应用下载包不包含个人数据库。
+- [历史版本备份](Backups)与[本次验证记录](VALIDATION-0.8.0.md)保留在仓库中。应用下载包不包含个人数据库。

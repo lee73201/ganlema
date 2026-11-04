@@ -1,4 +1,8 @@
-> 当前0.6.0三项功能与57项测试见 [VALIDATION-QUALITY-THREE.md](VALIDATION-QUALITY-THREE.md)。
+> 0.8.0 主窗口、双窗口同步与新图标见 [VALIDATION-0.8.0.md](VALIDATION-0.8.0.md)。
+
+> 0.7.0 任务推荐、续做备注、安静胶囊及透明度见 [VALIDATION-0.7.0.md](VALIDATION-0.7.0.md)。
+
+> 0.6.0 三项功能与 57 项测试见 [VALIDATION-QUALITY-THREE.md](VALIDATION-QUALITY-THREE.md)。
 
 > 当前0.5.2图钉点击区域修复见 [VALIDATION-PIN-FIX.md](VALIDATION-PIN-FIX.md)。
 
