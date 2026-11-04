@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>干了吗</title>
+  <desc>鼠尾草绿色圆角底板，中间是一枚带勾选标记的浅色悬浮胶囊</desc>
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#577568"/>
+      <stop offset=".56" stop-color="#38574d"/>
+      <stop offset="1" stop-color="#233a34"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#aec4b7" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#132c24" stop-opacity=".55"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#f2f7ef"/>
+      <stop offset="1" stop-color="#bfd3c7"/>
+    </linearGradient>
+  </defs>
+  <rect x="104" y="119" width="816" height="820" rx="184" fill="#192d26" opacity=".13"/>
+  <rect x="102" y="106" width="820" height="820" rx="184" fill="#192d26" opacity=".18"/>
+  <rect x="100" y="96" width="824" height="824" rx="184" fill="url(#base)"/>
+  <rect x="105" y="101" width="814" height="814" rx="179" fill="none" stroke="url(#edge)" stroke-width="9"/>
+  <rect x="205" y="382" width="614" height="278" rx="139" fill="#122c23" opacity=".24"/>
+  <rect x="205" y="366" width="614" height="278" rx="139" fill="url(#glass)"/>
+  <rect x="211" y="372" width="602" height="266" rx="133" fill="none" stroke="#f8fcf7" stroke-opacity=".65" stroke-width="7"/>
+  <path d="M345 506l64 64 138-143" fill="none" stroke="#305b4b" stroke-width="51" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="685" cy="505" r="31" fill="#688e7d"/>
+</svg>

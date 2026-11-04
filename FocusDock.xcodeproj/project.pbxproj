@@ -515,6 +515,22 @@
 			path = "Resources/Info.plist";
 			sourceTree = "SOURCE_ROOT";
 		};
+		25AA0D5344965F9B6DD8561D = {
+			isa = "PBXFileReference";
+			lastKnownFileType = "image.icns";
+			path = "Resources/AppIcon.icns";
+			sourceTree = "SOURCE_ROOT";
+		};
+		69861327999DDC3EEF3B099C = {
+			isa = "PBXBuildFile";
+			fileRef = "25AA0D5344965F9B6DD8561D";
+		};
+		3690BB0E94A138416B60A212 = {
+			isa = "PBXResourcesBuildPhase";
+			buildActionMask = "2147483647";
+			files = ("69861327999DDC3EEF3B099C");
+			runOnlyForDeploymentPostprocessing = "0";
+		};
 		FE0A091FDBFB3E9C31B7A1BD = {
 			isa = "PBXGroup";
 			name = "Products";
@@ -523,7 +539,7 @@
 		};
 		2EB2D8158FC6EF9EB19CB439 = {
 			isa = "PBXGroup";
-			children = ("3EA50D006D022AB536A16620", "C3AD78852030F4678E90BA3B", "8D0C262BC1F470E9DD174206", "7B594B6DB375E1BF3F23CDD6", "FE0A091FDBFB3E9C31B7A1BD");
+			children = ("3EA50D006D022AB536A16620", "C3AD78852030F4678E90BA3B", "8D0C262BC1F470E9DD174206", "7B594B6DB375E1BF3F23CDD6", "25AA0D5344965F9B6DD8561D", "FE0A091FDBFB3E9C31B7A1BD");
 			sourceTree = "<group>";
 		};
 		657EE81F72B04E344AD48704 = {
@@ -672,7 +688,7 @@
 			productReference = "027D487ADCC247023A2A3FF3";
 			productType = "com.apple.product-type.application";
 			buildConfigurationList = "576DD4159BD7DCD4225CB810";
-			buildPhases = ("C0BBD17BF7C64947E0FE2CD9", "43D609D39009D71D7A30B0DA");
+			buildPhases = ("C0BBD17BF7C64947E0FE2CD9", "43D609D39009D71D7A30B0DA", "3690BB0E94A138416B60A212");
 			buildRules = ();
 			dependencies = ("F250856E30DC19478AB7E595");
 		};

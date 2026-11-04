@@ -42,6 +42,11 @@ for name, folder in [("FocusDockCore", "Sources/FocusDockCore"), ("FocusDock", "
 
 plist = add("Info.plist", "PBXFileReference", lastKnownFileType="text.plist.xml", path="Resources/Info.plist", sourceTree="SOURCE_ROOT")
 groups.append(plist)
+icon_path = "Resources/AppIcon.icns"
+icon = add(icon_path, "PBXFileReference", lastKnownFileType="image.icns", path=icon_path, sourceTree="SOURCE_ROOT")
+groups.append(icon)
+icon_build = add(icon_path + ".build", "PBXBuildFile", fileRef=icon)
+app_resources = add("FocusDock.resources", "PBXResourcesBuildPhase", buildActionMask="2147483647", files=[icon_build], runOnlyForDeploymentPostprocessing="0")
 product_group = add("Products", "PBXGroup", name="Products", children=list(products.values()), sourceTree="<group>")
 groups.append(product_group)
 main_group = add("MainGroup", "PBXGroup", children=groups, sourceTree="<group>")
@@ -76,7 +81,10 @@ for name in targets:
     else:
         settings.update(CODE_SIGNING_ALLOWED="NO", LD_RUNPATH_SEARCH_PATHS="$(inherited) @loader_path/../Frameworks")
         product_type = "com.apple.product-type.bundle.unit-test"
-    add(name + ".target", "PBXNativeTarget", name=name, productName=name, productReference=products[name], productType=product_type, buildConfigurationList=configs(name, settings), buildPhases=[target_sources[name], phase], buildRules=[], dependencies=dependencies)
+    phases = [target_sources[name], phase]
+    if name == "FocusDock":
+        phases.append(app_resources)
+    add(name + ".target", "PBXNativeTarget", name=name, productName=name, productReference=products[name], productType=product_type, buildConfigurationList=configs(name, settings), buildPhases=phases, buildRules=[], dependencies=dependencies)
 
 project_id = add("project", "PBXProject", attributes=dict(LastUpgradeCheck="1600"), buildConfigurationList=project_configs, compatibilityVersion="Xcode 14.0", developmentRegion="zh_CN", knownRegions=["zh_CN", "en", "Base"], mainGroup=main_group, productRefGroup=product_group, projectDirPath="", projectRoot="", targets=list(targets.values()))
 project = ROOT / "FocusDock.xcodeproj"
