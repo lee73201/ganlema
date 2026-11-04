@@ -1,3 +1,5 @@
+> 0.8.1 胶囊启动与应用主题见 [VALIDATION-0.8.1.md](VALIDATION-0.8.1.md)。
+
 > 0.8.0 主窗口、双窗口同步与新图标见 [VALIDATION-0.8.0.md](VALIDATION-0.8.0.md)。
 
 > 0.7.0 任务推荐、续做备注、安静胶囊及透明度见 [VALIDATION-0.7.0.md](VALIDATION-0.7.0.md)。

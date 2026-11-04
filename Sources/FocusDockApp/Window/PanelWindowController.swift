@@ -115,7 +115,11 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     var onShowWorkspace: (() -> Void)?
     @Published var errorMessage: String?
     @Published var theme: AppTheme {
-        didSet { defaults.set(theme.rawValue, forKey: "theme"); applyFrame() }
+        didSet {
+            defaults.set(theme.rawValue, forKey: "theme")
+            settingsWindow?.appearance = theme.appearance
+            applyFrame()
+        }
     }
 
     private var openTimer: Task<Void, Never>?
@@ -253,14 +257,11 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
 
     func showDock() { window?.orderFrontRegardless() }
     func reveal() { send(.reveal); window?.makeKeyAndOrderFront(nil) }
-    func togglePin() {
-        if !interaction.isExpanded && !floatingAppearance.clickToPin {
-            send(.openUnpinned)
-            window?.makeKeyAndOrderFront(nil)
-            return
-        }
-        send(.click); if interaction.isPinned { window?.makeKeyAndOrderFront(nil) }
+    func openWorkspaceFromDock() {
+        if !interaction.isPinned { collapse() }
+        onShowWorkspace?()
     }
+    func togglePin() { send(.click); if interaction.isPinned { window?.makeKeyAndOrderFront(nil) } }
     var canToggleQuietMode: Bool { interaction.isQuiet || (!interaction.isEditing && !interaction.isDragging) }
     func toggleQuietMode() {
         guard canToggleQuietMode else { return }
@@ -491,7 +492,8 @@ final class PanelWindowController: NSWindowController, ObservableObject, NSWindo
     func openAppearanceSettings() {
         if let settingsWindow { settingsWindow.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true); return }
         let panel = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 520, height: 740), styleMask: [.titled, .closable, .resizable, .miniaturizable], backing: .buffered, defer: false)
-        panel.title = "悬浮外观 · 干了吗"; panel.isReleasedWhenClosed = false
+        panel.title = "外观设置 · 干了吗"; panel.isReleasedWhenClosed = false
+        panel.appearance = theme.appearance
         panel.minSize = NSSize(width: 480, height: 580)
         let host = NSHostingView(rootView: AppearanceSettingsView(controller: self))
         let glass = PanelMaterialView(host: host); glass.configure(expanded: true, appearance: floatingAppearance)

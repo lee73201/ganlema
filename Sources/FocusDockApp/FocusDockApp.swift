@@ -33,7 +33,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             controller.onShowWorkspace = { [weak self] in self?.openWorkspace() }
             installMenu()
             controller.showDock()
-            openWorkspace()
         } catch {
             let alert = NSAlert()
             alert.messageText = "干了吗无法打开本地数据"
@@ -89,7 +88,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         sizingItem.submenu = sizingMenu
         menu.addItem(sizingItem)
         menu.addItem(menuItem("重置当前屏幕位置", action: #selector(resetPosition), key: ""))
-        menu.addItem(menuItem("悬浮外观设置…", action: #selector(appearanceSettings), key: ","))
+        menu.addItem(menuItem("外观设置…", action: #selector(appearanceSettings), key: ","))
         menu.addItem(.separator())
         let themeMenu = NSMenu()
         for theme in AppTheme.allCases {
@@ -142,7 +141,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     }
     @objc private func quit() { NSApp.terminate(nil) }
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        openWorkspace()
+        if let window = workspace?.window, window.isVisible || window.isMiniaturized {
+            workspace?.present()
+        } else {
+            dock?.showDock()
+        }
         return false
     }
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }

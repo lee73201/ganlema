@@ -9,14 +9,23 @@ struct AppearanceSettingsView: View {
         VStack(spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 3) {
-                    Text("悬浮外观").font(.system(size: 21, weight: .semibold))
-                    Text("实时应用到桌面胶囊 · 自动保存").font(.system(size: 11)).foregroundStyle(.secondary)
+                    Text("外观设置").font(.system(size: 21, weight: .semibold))
+                    Text("应用主题与桌面胶囊 · 自动保存").font(.system(size: 11)).foregroundStyle(.secondary)
                 }
                 Spacer()
-                Button("恢复默认") { controller.floatingAppearance = FloatingAppearance() }
+                Button("恢复胶囊默认") { controller.floatingAppearance = FloatingAppearance() }
             }.padding(22)
             ScrollView(.vertical) {
                 VStack(alignment: .leading, spacing: 20) {
+                    section("应用主题") {
+                        Picker("应用主题", selection: $controller.theme) {
+                            ForEach(AppTheme.allCases, id: \.self) { Text($0.title).tag($0) }
+                        }.pickerStyle(.segmented).labelsHidden()
+                        Text("同时应用到主窗口和展开后的悬浮面板。")
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
+                    }
+                    DockStyle.separator
+                    Text("桌面胶囊").font(.system(size: 12, weight: .semibold))
                     HStack(spacing: 6) {
                         ForEach(CapsuleShape.allCases) { shape in
                             Button { settings.wrappedValue.shape = shape } label: {
@@ -42,10 +51,10 @@ struct AppearanceSettingsView: View {
                             .frame(height: 90)
                         Text("实时预览 · \(Int(size.width)) × \(Int(size.height)) pt").font(.system(size: 10)).foregroundStyle(.secondary)
                     }.frame(maxWidth: .infinity).padding(12).background(.primary.opacity(0.025), in: RoundedRectangle(cornerRadius: 12))
-                    section("外观") {
+                    section("胶囊外观") {
                         row("尺寸") { Picker("尺寸", selection: settings.scale) { ForEach(CapsuleScale.allCases, id: \.self) { Text($0.title).tag($0) } }.pickerStyle(.segmented) }
                         row("毛玻璃材质") { Picker("毛玻璃材质", selection: settings.material) { ForEach(CapsuleMaterial.allCases, id: \.self) { Text($0.title).tag($0) } } }
-                        row("颜色") { Picker("颜色", selection: settings.colorMode) { ForEach(CapsuleColorMode.allCases, id: \.self) { Text($0.title).tag($0) } } }
+                        row("胶囊颜色") { Picker("胶囊颜色", selection: settings.colorMode) { ForEach(CapsuleColorMode.allCases, id: \.self) { Text($0.title).tag($0) } } }
                         if controller.floatingAppearance.colorMode == .custom {
                             HStack(spacing: 9) {
                                 Text("强调色").frame(width: 100, alignment: .leading)
@@ -75,8 +84,9 @@ struct AppearanceSettingsView: View {
                     section("交互") {
                         slider("悬停展开", value: settings.hoverDelay, range: 0.1...1.5, text: "\(Int(controller.floatingAppearance.hoverDelay * 1000)) ms")
                         slider("离开收起", value: settings.collapseDelay, range: 0.15...3, text: "\(Int(controller.floatingAppearance.collapseDelay * 1000)) ms")
-                        Toggle("点击胶囊固定展开", isOn: settings.clickToPin)
                         Toggle("拖动后吸附屏幕边缘", isOn: settings.edgeSnap)
+                        Text("点击胶囊打开主窗口；要固定速览面板，请点面板里的图钉。")
+                            .font(.system(size: 11)).foregroundStyle(.secondary)
                         Text("自动向屏幕空余较多的一侧展开；按显示器分别记住位置和展开尺寸。")
                             .font(.system(size: 10)).foregroundStyle(.secondary)
                     }

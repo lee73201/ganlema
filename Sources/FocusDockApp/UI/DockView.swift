@@ -61,11 +61,11 @@ struct DockView: View {
     private var capsule: some View {
         LiveCapsuleView(controller: controller, repository: repository, timer: controller.focusTimer)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .overlay(DragRegion(controller: controller, onClick: { controller.togglePin() }).frame(maxWidth: .infinity, maxHeight: .infinity))
+        .overlay(DragRegion(controller: controller, onClick: controller.openWorkspaceFromDock).frame(maxWidth: .infinity, maxHeight: .infinity))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(controller.interaction.isQuiet ? "干了吗，安静胶囊" : "干了吗，\(repository.items.filter { !$0.isCompleted }.count) 项待办")
-        .accessibilityAddTraits(.isButton).accessibilityAction { controller.togglePin() }
-        .help(controller.interaction.isQuiet ? "安静胶囊 · 点击打开 · 拖动移动" : controller.urgency == .normal ? "悬停展开 · 点击锁定 · 拖动移动" : "\(controller.urgency.title) · 悬停查看")
+        .accessibilityAddTraits(.isButton).accessibilityAction { controller.openWorkspaceFromDock() }
+        .help(controller.interaction.isQuiet ? "安静胶囊 · 点击打开主窗口" : "悬停速览 · 点击打开主窗口 · 拖动移动")
     }
 
     private var expanded: some View {
@@ -112,8 +112,13 @@ struct DockView: View {
                     }.font(.system(size: 11)).foregroundStyle(.secondary)
                 }.frame(maxWidth: .infinity, alignment: .leading)
             }
-            .overlay(DragRegion(controller: controller).frame(maxWidth: .infinity, maxHeight: .infinity))
-            .help("拖动以移动悬浮窗")
+            .overlay(DragRegion(controller: controller, onClick: controller.openWorkspaceFromDock).frame(maxWidth: .infinity, maxHeight: .infinity))
+            .help("点击打开主窗口 · 拖动以移动悬浮窗")
+            Button(action: controller.openWorkspaceFromDock) {
+                Image(systemName: "arrow.up.right.square")
+                    .font(.system(size: 13, weight: .medium)).foregroundStyle(.secondary)
+                    .frame(width: 28, height: 28).contentShape(Rectangle())
+            }.buttonStyle(.plain).help("打开主窗口").accessibilityLabel("打开主窗口")
             Button { controller.togglePin() } label: {
                 Image(systemName: controller.interaction.isPinned ? "pin.fill" : "pin")
                     .font(.system(size: 13, weight: .medium))
@@ -140,7 +145,7 @@ struct DockView: View {
             }
             NotificationControl(reminders: controller.reminders, controller: controller)
             Menu {
-                Button("悬浮外观设置…") { controller.openAppearanceSettings() }
+                Button("外观设置…") { controller.openAppearanceSettings() }
                 Button(controller.interaction.isQuiet ? "关闭安静胶囊" : "开启安静胶囊") { controller.toggleQuietMode() }
                     .disabled(!controller.canToggleQuietMode)
                 Divider()
@@ -150,7 +155,7 @@ struct DockView: View {
                 Divider()
                 Toggle("DDL 临近时增大窗口", isOn: $controller.deadlineGrowthEnabled)
                 Button("启用系统提醒") { Task { await controller.reminders.enableOrOpenSettings() } }
-                Button("打开主窗口", systemImage: "macwindow") { controller.onShowWorkspace?() }
+                Button("打开主窗口", systemImage: "macwindow", action: controller.openWorkspaceFromDock)
                 Button("收起窗口", systemImage: "minus") { controller.collapse() }.disabled(controller.hasPanelEditor)
                 Button("移到鼠标所在屏幕") { controller.moveToPointerScreen() }
                 Button("放大窗口") { controller.scaleWindow(1.15) }
